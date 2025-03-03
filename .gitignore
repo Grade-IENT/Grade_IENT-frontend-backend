@@ -1,0 +1,12 @@
+# Virtual environment directories
+venv/
+env/
+.venv/
+
+# Environment files
+.env
+.env.*
+
+#ignoring bytecode files
+*.pyc
+__pycache__/
