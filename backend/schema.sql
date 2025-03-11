@@ -1,6 +1,4 @@
 
-
-
 CREATE TABLE Class(
 
     id SERIAL PRIMARY KEY,
