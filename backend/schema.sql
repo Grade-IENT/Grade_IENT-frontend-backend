@@ -27,5 +27,6 @@ CREATE TABLE Teaches(
     prof_id INT references PROFESSOR(id) ON DELETE CASCADE,
     class_id INT references Class(id) ON DELETE CASCADE,
     PRIMARY KEY(prof_id, class_id)
+    SQI INT
 
 );
