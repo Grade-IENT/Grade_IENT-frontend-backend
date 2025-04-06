@@ -1,0 +1,9 @@
+[submodule "backend/rmp-scraper"]
+	path = backend/rmp-scraper
+	url = https://github.com/Grade-IENT/rmp-scraper.git
+[submodule "backend/sentiment_analysis"]
+	path = backend/sentiment_analysis
+	url = https://github.com/Grade-IENT/sentiment_analysis.git
+[submodule "backend/Grade-ient_SQI"]
+	path = backend/Grade-ient_SQI
+	url = https://github.com/Grade-IENT/Grade-ient_SQI.git
