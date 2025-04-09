@@ -78,6 +78,7 @@ with st.container():
 
             if rows:
                 df = pd.DataFrame(rows, columns=["Professor Name", "NetID", "Metrics", "SQI", "Summary"])
+                print(rows)
                 for _, row in df.iterrows():
                     with st.container():
                         st.markdown(f"""
