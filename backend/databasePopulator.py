@@ -38,6 +38,14 @@ for file_path in glob.glob('*backend/sentiment_analysis/Ratings Data/*.csv'):
         for row in reader:
             hashMapProf[row[0]].update({'rating': float(row[1])})
 
+for file_path in glob.glob('*backend\class_and_pre-recs\*.csv'):
+    with open(file_path, 'r', encoding='utf-8') as csv_file:
+        reader = csv.reader(csv_file)
+        next(reader)
+
+        for row in reader:
+            hashMapCourse[row[0]].update({'summary': row[1], 'rating': float(row[2])})
+
 courses = ['Chemistry', 'Physics', 'Math', 'Computer Science', 'Engineering']
 
 for course in courses:
