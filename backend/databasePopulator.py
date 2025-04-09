@@ -10,7 +10,7 @@ conn = psycopg2.connect(
     host="localhost",
     database="gradientdb",
     user="postgres",
-    password="accountSqL01"
+   # password="accountSqL01"
 )
 cur = conn.cursor()
 
@@ -20,17 +20,19 @@ hashMapCourse = defaultdict(dict)
 
 
 
-for file_path in glob.glob('*backend/rmp-scraper/Summarized_Reviews/*.csv'):
+for file_path in glob.glob(r'*backend/rmp-scraper/Summarized_Reviews/*.csv'):
     with open(file_path, 'r', encoding='utf-8') as csv_file:
         reader = csv.reader(csv_file)
         next(reader)
 
         for row in reader:  
             hashMapProf[row[0]].update({'summary': row[1]})
+    
 
 
 
-for file_path in glob.glob('*backend/sentiment_analysis/Ratings Data/*.csv'):
+for file_path in glob.glob(r'*backend/sentiment_analysis/Ratings Data/*.csv'):
+    print("HEHEHEHEHEHEHEHEHEEHEHEHEHEE")
     with open(file_path, 'r', encoding='utf-8') as csv_file:
         reader = csv.reader(csv_file)
         next(reader)
@@ -49,7 +51,7 @@ for file_path in glob.glob('*backend\class_and_pre-recs\*.csv'):
 courses = ['Chemistry', 'Physics', 'Math', 'Computer Science', 'Engineering']
 
 for course in courses:
-    for file_path in glob.glob(f'backend\Grade-ient_SQI\courses\{course}\*.csv'):
+    for file_path in glob.glob(r'backend/Grade-ient_SQI/courses/{course}/*.csv'):
         #print(file_path)
 
         with open(file_path, 'r', encoding='utf-8') as csv_file:
@@ -65,11 +67,11 @@ for course in courses:
                 #print('in here')
                 for row in reader:
                     hashMapCourse[row[0]].update({'SQI': float(row[2]), 'course_name': row[1]})
-#print(hashMapCourse)
+print(hashMapCourse)
 
-#print(hashMapProf)
+print(hashMapProf)
 
-#print(hashMapProf)
+print(hashMapProf)
 try:
     with conn.cursor() as cur:
         execute_batch(cur, """
@@ -87,7 +89,7 @@ conn.commit()
 
 
 for course in courses:
-    for file_path in glob.glob(f'backend\Grade-ient_SQI\courses\{course}\*.csv'):
+    for file_path in glob.glob(r'backend\Grade-ient_SQI\courses\{course}\*.csv'):
 
         with open(file_path, 'r', encoding='utf-8') as csv_file:
             reader = csv.reader(csv_file)
