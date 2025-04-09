@@ -7,3 +7,6 @@
 [submodule "backend/Grade-ient_SQI"]
 	path = backend/Grade-ient_SQI
 	url = https://github.com/Grade-IENT/Grade-ient_SQI.git
+[submodule "backend/class_and_pre-rec_scraper"]
+	path = backend/class_and_pre-rec_scraper
+	url = https://github.com/Grade-IENT/class_and_pre-rec_scraper.git

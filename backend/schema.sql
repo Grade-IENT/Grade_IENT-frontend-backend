@@ -10,6 +10,14 @@ CREATE TABLE Class(
 
 );
 
+CREATE TABLE UserAccount(
+
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    userPassword VARCHAR(100) NOT NULL
+
+);
+
 CREATE TABLE Professor(
 
     id SERIAL PRIMARY KEY,
