@@ -1,0 +1,45 @@
+Year,Semester,Course Code,Course Name,Prerequisites
+Freshman,Fall,160:159,General Chemistry for Engineers,640:103 or 640:104 or 640:112 or 640:115 or 640:135 or 640:151
+Freshman,Fall,160:171,Intro to Experimentation,160:159 or 160:161 or 160:163 or 160:165 or 160:115 or 160:115
+Freshman,Fall,355:101,Expository Writing,
+Freshman,Fall,440:100,Engineering Orientation,
+Freshman,Fall,640:151,Calculus I,640:113 and 640:114 and 640:112 or 640:113 and 640:114 and 640:115
+Freshman,Fall,750:123,Analytical Physics IA,
+Freshman,Fall,Humanities Elective,Humanities/Social Science Elective,
+Freshman,Spring,160:160,General Chemistry for Engineers,640:112 and 640:115 and 160:159
+Freshman,Spring,440:127,Intro to Computers for Engineers,
+Freshman,Spring,440:221,Engineering Mechanics (Statics),640:151 and 640:121 and 640:135 and 750:123 or 640:151 and 640:191 and 640:135 and 750:203 or 750:202 and 750:271 and 750:115 and 640:151 or 640:151 and 640:191 and 640:135 and 750:271 or 640:151 and 640:121 and 640:135 and 750:213 or 640:151 and 640:135 and 640:121 and 750:131
+Freshman,Spring,640:152,Calculus II,640:135 or 640:151 or 640:135 or 640:155 or 640:121 or 640:135
+Freshman,Spring,750:124,Analytical Physics IB,750:115 or 750:123
+Sophomore,Fall,332:231,Digital Logic Design,640:152 and 640:154 and 640:192 and 750:123 or 640:152 and 640:154 and 640:192 and 750:116 or 640:152 and 640:154 and 640:192 and 750:201 or 640:152 and 640:154 and 640:192 and 750:203 or 640:152 and 640:154 and 640:192 and 750:271
+Sophomore,Fall,332:252,Programming Methodology I,440:127
+Sophomore,Fall,640:244,Differential Equations,640:243 or 640:251 or 640:291 or 640:235 or 640:235
+Sophomore,Fall,332:271,Electrical Circuits,
+Sophomore,Fall,332:273,Electromagnetic Fields,
+Sophomore,Fall,332:222,Electronics I,332:221 and 750:234 and 640:251 or 640:221 and 640:235 and 332:221 or 640:291 and 640:235 and 332:221
+Sophomore,Fall,750:227,Analytical Physics IIA,750:116 and 750:124 and 750:271 and 640:152
+Sophomore,Spring,332:351,Power Electronics,198:111 or 332:252
+Sophomore,Spring,750:228,Analytical Physics IIB,750:204 and 750:204 and 640:152 or 750:227 and 750:227 and 640:152 or 750:272 and 750:272 and 640:152
+Sophomore,Spring,750:229,Analytical Physics IIA Lab,750:116 or 750:124 or 750:201 or 750:203 or 750:271 or 750:213 or 750:131 or 750:203 or 750:203
+Sophomore,Spring,750:230,Analytical Physics IIB Lab,750:227 or 750:214 or 750:132 or 750:204 or 750:204 or 750:204
+Sophomore,Spring,332:366,Control Systems,332:361 or 332:363
+Junior,Fall,332:475,Renewable Energy Systems,
+Junior,Fall,332:373,Elements of Electrical Engineering,640:251 and 640:251 and 750:227 and 750:227 or 640:291 and 640:291 and 750:227 and 750:227
+Junior,Fall,332:314,Embedded Systems,
+Junior,Fall,332:346,Signals and Systems,332:345 or 440:127
+Junior,Fall,332:489,Digital Signal Processing,
+Junior,Fall,332:351,Microprocessors,198:111 or 332:252
+Junior,Fall,332:466,Machine Learning for Engineers,332:361 or 332:382
+Junior,Spring,Technical Elective,Technical Elective,
+Junior,Spring,Technical Elective,Technical Elective,
+Junior,Spring,General Elective,General Elective,
+Junior,Spring,General Elective,General Elective,
+Senior,Fall,332:491,Capstone Design I,
+Senior,Fall,332:492,Capstone Design II,
+Senior,Fall,332:482,Cybersecurity,332:479
+Senior,Fall,332:4XX,Department Elective,
+Senior,Fall,Humanities Elective,Humanities/Social Science Elective,
+Senior,Spring,332:401,System Design,
+Senior,Spring,332:468,Software Engineering,
+Senior,Spring,332:4XX,Department Elective,
+Senior,Spring,Technical Elective,Technical Elective,

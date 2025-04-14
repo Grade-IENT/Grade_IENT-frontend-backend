@@ -1,0 +1,31 @@
+Year,Semester,Course Code,Course Name,Prerequisites
+Freshman,Fall,440:101,Introduction to Data-Driven Design for Engineering Applications,
+Freshman,Fall,160:159,General Chemistry for Engineers,640:103 or 640:104 or 640:112 or 640:115 or 640:135 or 640:151
+Freshman,Fall,160:171,Introduction to Experimentation,160:159 or 160:161 or 160:163 or 160:165 or 160:115 or 160:115
+Freshman,Fall,355:101,College Writing,
+Freshman,Fall,640:151,Calculus for Mathematical and Physical Sciences I,640:113 and 640:114 and 640:112 or 640:113 and 640:114 and 640:115
+Freshman,Fall,750:123,Analytical Physics I,
+Freshman,Spring,440:102,Integrated Data-Driven Design for Engineering Applications,440:101
+Freshman,Spring,160:160,General Chemistry for Engineers II,640:112 and 640:115 and 160:159
+Freshman,Spring,640:152,Calculus for Mathematical and Physical Sciences II,640:135 or 640:151 or 640:135 or 640:155 or 640:121 or 640:135
+Freshman,Spring,750:124,Analytical Physics IB,750:115 or 750:123
+Freshman,Spring,440:221,Engineering Mechanics: Statics,640:151 and 640:121 and 640:135 and 750:123 or 640:151 and 640:191 and 640:135 and 750:203 or 750:202 and 750:271 and 750:115 and 640:151 or 640:151 and 640:191 and 640:135 and 750:271 or 640:151 and 640:121 and 640:135 and 750:213 or 640:151 and 640:135 and 640:121 and 750:131
+Freshman,Spring,Humanities Elective,Humanities/Social Science Elective,
+Sophomore,Fall,155:201,Material & Energy Balances,640:152 and 640:154 and 640:192 and 160:160 or 640:152 and 640:154 and 640:192 and 160:162 or 640:152 and 640:154 and 640:192 and 160:116 or 640:152 and 640:154 and 640:192 and 160:116 or 640:152 and 640:136 and 640:122 and 160:116 or 640:152 and 640:136 and 640:122 and 160:116
+Sophomore,Fall,155:298,Professional Skills Development,
+Sophomore,Fall,160:307,Organic Chemistry I,160:160 or 160:162 or 160:164 or 160:116 or 160:166 or 160:116
+Sophomore,Fall,640:251,Multivariable Calculus,640:152 or 640:192 or 640:136 or 640:156 or 640:122
+Sophomore,Fall,750:227,Analytical Physics II,750:116 and 750:124 and 750:271 and 640:152
+Sophomore,Spring,155:208,Thermodynamics I,155:201
+Junior,Fall,155:303,Transport Phenomena I,155:208 or 640:244
+Junior,Fall,155:307,Computational Methods in Chemical Engineering,640:244 and 155:201 and 440:127 and 440:127 or 640:244 and 155:201 and 198:101 and 198:101 or 640:244 and 155:201 and 198:151 and 198:151 or 640:314 and 155:201 and 440:127 and 440:127 or 640:314 and 155:201 and 198:101 and 198:101 or 640:314 and 155:201 and 440:127 and 440:127
+Junior,Fall,155:309,Thermodynamics II,155:208
+Junior,Fall,160:311,Organic Chemistry Lab,160:307 and 160:171 and 160:113 or 160:125 and 160:171 and 160:307 or 160:315 and 160:171 and 160:113 or 160:125 and 160:171 and 160:315
+Junior,Fall,Technical Elective,Technical Elective,
+Junior,Spring,155:304,Transport Phenomena II,155:303 or 155:309
+Senior,Fall,155:411,Biochemical Engineering,155:210 or 155:303 and 155:307 and 155:309
+Senior,Fall,155:415,Process Engineering Lab I,155:304 or 155:324 and 155:341
+Senior,Fall,155:422,Process Simulation & Control,155:307 or 155:324 and 155:341
+Senior,Spring,155:416,Processing Engineering Lab II,155:415 or 155:341
+Senior,Spring,155:428,Design II,155:415
+Senior,Spring,General Elective,General Elective,

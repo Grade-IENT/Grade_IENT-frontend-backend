@@ -1,141 +1,202 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
+from pathlib import Path
+import sys
 
-st.set_page_config(page_title= "Gradient - Four Year Plan", page_icon=":tada:", layout ="wide", initial_sidebar_state="collapsed")
-st.markdown(
-    """
-    <style>
-        div[data-testid="collapsedControl"] {
-            visibility: hidden;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-) 
-# use CSS
+# ─────────────── Add repo root to path ───────────────
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+
+# ─────────────── Import scheduler ───────────────
+from course_scheduler import build_plan, DEFAULT_MIN_CR, DEFAULT_MAX_CR
+
+# ─────────────── Paths & Constants ───────────────
+DATA_DIR = Path(__file__).resolve().parents[2] / "backend" / "4_Year_input_Data"
+AP_CREDIT_CSV = DATA_DIR / "rutgers_ap_credits.csv"
+
+MAJOR_CSV = {
+    "Aerospace Engineering":                 "aerospace_engineering_courses.csv",
+    "Biomedical Engineering":                "biomedical_engineering_courses.csv",
+    "Biochemical Engineering":               "biochemical_engineering_courses.csv",
+    "Chemical Engineering":                  "chemical_engineering_courses.csv",
+    "Civil Engineering":                     "civil_engineering_courses.csv",
+    "Environmental Engineering":             "environmental_engineering_courses.csv",
+    "Computer Engineering":                  "computer_engineering_courses.csv",
+    "Electrical Engineering":               "electrical_engineering_courses.csv",
+    "Industrial and Systems Engineering":    "industrial_systems_engineering_courses.csv",
+    "Materials Science Engineering":         "materials_science_engineering_courses.csv",
+    "Mechanical Engineering":                "mechanical_aerospace_courses.csv",
+    "Packaging Engineering":                "packaging_engineering_courses.csv",
+}
+
+# ─────────────── Page setup ───────────────
+st.set_page_config(page_title="Gradient – Four‑Year Plan", page_icon=":tada:", layout="wide", initial_sidebar_state="collapsed")
+
+# ─────────────── Style Injection ───────────────
 def local_css(file_name):
-    with open(file_name) as f :
+    with open(file_name) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
 
 local_css("style/style.css")
 
+# Additional inline fixes
+st.markdown("""
+<style>
+/* Hide sidebar toggle */
+div[data-testid="collapsedControl"] {
+    visibility: hidden;
+}
+
+/* AP slider box */
+div[data-baseweb="slider"] {
+    background-color: white !important;
+    color: black !important;
+    border-radius: 6px;
+    padding: 8px;
+}
+
+/* Replace green success msg */
+div[data-testid="stMarkdownContainer"] > div[style*="background-color: rgb(220, 252, 231)"] {
+    background-color: transparent !important;
+    color: black !important;
+    font-weight: 600;
+}
+</style>
+""", unsafe_allow_html=True)
+st.markdown("""
+<style>
+/* Streamlit's AP slider container */
+div[data-baseweb="slider"] {
+    background-color: white !important;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* WebKit slider track + thumb */
+input[type="range"] {
+    accent-color: black !important;
+}
+
+/* Ensure labels (1–5) are black */
+div[data-baseweb="slider"] span {
+    color: black !important;
+    font-weight: 500;
+}
+</style>
+""", unsafe_allow_html=True)
+
 with st.container():
-     st.write("Go to :")
-     left, middle, right = st.columns(3)
-     with left:          
-        if st.button("Profile", use_container_width= True):
+    st.write("Go to:")
+    left, middle, right = st.columns(3)
+    with left:
+        if st.button("Profile", use_container_width=True):
             st.switch_page("pages/profile.py")
-    
-     with middle:
-
-        if st.button("Professors", use_container_width= True):
+    with middle:
+        if st.button("Professors", use_container_width=True):
             st.switch_page("pages/professors.py")
-
-     with right:
+    with right:
         if st.button("Scheduling", use_container_width=True):
             st.switch_page("pages/schedule.py")
-     st.write("---")
+    st.write("---")
 
+# Inputs
+st.title("Four Year Plan")
 
-with st.container():
-    
+majors = list(MAJOR_CSV.keys())
+col1, col2 = st.columns(2)
 
-    st.title("Four Year Plan")
-    Major = st.selectbox(
-        'Pick a Major:',
-        (' ','Aerospace Engineering','Biomedical Engineering', 'Biochemical Engineering', 'Chemical Engineering', 'Civil Engineering', 'Environmental Engineering', 'Electrical and Computer Engineering', 'Industrial and Systems Engineering', 'Materials Science Engineering', 'Mechanical and Aerospace Engineering','Packaging Engineering')
-    )
-    
-    # major = text_search = st.text_input("Search up a major for the 4 year plan!")
-    # if major: 
-    #     st.write("4 year schedule for " , major)
+major = st.selectbox("Select Major", ["Select a major"] + majors)
 
+cr_col1, cr_col2 = st.columns([1, 1])
 
+with cr_col1:
+    min_cr = st.number_input("Min Credits / Semester", value=DEFAULT_MIN_CR, min_value=6, max_value=18)
 
+with cr_col2:
+    max_cr = st.number_input("Max Credits / Semester", value=DEFAULT_MAX_CR, min_value=min_cr, max_value=21)
 
-#year 1 and 2
-with st.container():
+# ─────────────── AP Section ───────────────
+ap_catalog = pd.read_csv(AP_CREDIT_CSV, dtype=str)
+exams = sorted(ap_catalog["AP Exam"].unique())
 
-        st.subheader("Year 1:")
-        fall, spring = st.columns(2)
-                
-        with fall: 
-            df = pd.DataFrame(
-                np.zeros((5, 4)), columns=("Class","Code", "Credits", "Difficulty")
-            )
+st.markdown("### Optional: Add AP Credits")
+chosen = st.multiselect("Select AP Exams", exams)
+ap_scores = {exam: int(st.slider(f"{exam} score", 1, 5, 5, key=exam)) for exam in chosen}
 
-            st.table(df)
+build_btn = st.button("Generate Plan")
 
-        with spring: 
-            df = pd.DataFrame(
-                np.zeros((5, 4)), columns=("Class","Code", "Credits", "Difficulty")
-            )
+# ─────────────── Generate Plan ───────────────
+if build_btn and major in majors:
+    csv_path = DATA_DIR / MAJOR_CSV[major]
+    if not csv_path.exists():
+        st.error(f"Catalog file not found: **{csv_path}**")
+        st.stop()
 
-            st.table(df)
+    sched, sem_credits, df = build_plan(csv_path, ap_scores, min_cr=int(min_cr), max_cr=int(max_cr), mode="var")
 
-with st.container():
-        st.subheader("Year 2:")
-        
-        fall, spring = st.columns(2)
-        with fall: 
-            df = pd.DataFrame(
-                np.zeros((5, 4)), columns=("Class","Code", "Credits", "Difficulty")
-            
-            )
+    st.markdown(f"### Showing 4-Year Plan for **{major}**")
 
-            st.table(df)
+    for year in range(4):
+        st.subheader(f"Year {year + 1}")
+        col_fall, col_spring = st.columns(2)
+        for sem_idx, col in zip((year * 2, year * 2 + 1), (col_fall, col_spring)):
+            with col:
+                sem_name = f"Semester {sem_idx + 1}"
+                # Parse each row into structured columns
+                raw_rows = df[sem_name].replace("", pd.NA).dropna().tolist()
 
-        with spring: 
-            df = pd.DataFrame(
-                np.zeros((5, 4)), columns=("Class","Code", "Credits", "Difficulty")
-            
-            )
+                parsed = []
+                for entry in raw_rows:
+                    try:
+                        code, rest = entry.split(' ', 1)
+                        name, rest = rest.rsplit('(', 1)
+                        credits_part, sqi_part = rest.rstrip(')').split(', SQI ')
+                        credits = credits_part.strip().replace('cr', '').strip()
+                        sqi = float(sqi_part.strip())
+                        parsed.append({
+                            "Course Code": code.strip(),
+                            "Course Name": name.strip(),
+                            "Credits": int(credits),
+                            "SQI": sqi
+                        })
+                    except Exception as e:
+                        # fallback: include unparsed string
+                        parsed.append({
+                            "Course Code": "",
+                            "Course Name": entry.strip(),
+                            "Credits": "",
+                            "SQI": ""
+                        })
 
-            st.table(df)
+                # Display structured table
+                parsed_df = pd.DataFrame(parsed)
+                parsed_df.columns = ["Course_Code", "Course_Name", "Credits", "SQI"]
 
-# year 4 and 4 
+                st.markdown(f"**{sem_name}** — Total Credits: **{sem_credits[sem_idx]}**")
 
+                parsed_df = pd.DataFrame(parsed, index=None)
+                parsed_df.columns = ["Course Code", "Course Name", "Credits", "SQI"]
 
-with st.container():
-    
-        st.subheader("Year 4:")
-        fall, spring = st.columns(2)
-        with fall: 
-            df = pd.DataFrame(
-                np.zeros((5, 4)), columns=("Class","Code", "Credits", "Difficulty")
-            
-            )
+                # Prevent word wrapping in table headers and cells
+                st.markdown("""
+                <style>
+                thead tr th, tbody tr td {
+                    white-space: nowrap !important;
+                    text-align: left !important;
+                }
+                thead tr th:nth-child(3),
+                thead tr th:nth-child(4),
+                tbody tr td:nth-child(3),
+                tbody tr td:nth-child(4) {
+                    text-align: center !important;
+                }
+                </style>
+                """, unsafe_allow_html=True)
 
-            st.table(df)
+                st.dataframe(parsed_df.style.hide(axis="index"), hide_index = True,use_container_width=True)
 
-        with spring: 
-            df = pd.DataFrame(
-                np.zeros((5, 4)), columns=("Class","Code", "Credits", "Difficulty")
-            
-            )
+    st.download_button("Download Plan as CSV",
+                       data=df.to_csv(index=False).encode(),
+                       file_name="four_year_plan.csv")
 
-            st.table(df)
-
-with st.container():
-
-    st.subheader("Year 4:")
-
-    fall, spring = st.columns(2)
-    with fall: 
-            df = pd.DataFrame(
-                np.zeros((5, 4)), columns=("Class","Code", "Credits", "Difficulty")
-            
-            )
-
-            st.table(df)
-
-    with spring: 
-            df = pd.DataFrame(
-                np.zeros((5, 4)), columns=("Class","Code", "Credits", "Difficulty")
-            
-            )
-
-            st.table(df)
-
+elif build_btn:
+    st.warning("Please select a valid major to continue.")
