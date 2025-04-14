@@ -10,7 +10,7 @@ conn = psycopg2.connect(
     host="localhost",
     database="gradientdb",
     user="postgres",
-   # password="accountSqL01"
+    password="accountSqL01"
 )
 cur = conn.cursor()
 
@@ -32,7 +32,7 @@ for file_path in glob.glob(r'*backend/rmp-scraper/Summarized_Reviews/*.csv'):
 
 
 for file_path in glob.glob(r'*backend/sentiment_analysis/Ratings Data/*.csv'):
-    print("HEHEHEHEHEHEHEHEHEEHEHEHEHEE")
+    #print("HEHEHEHEHEHEHEHEHEEHEHEHEHEE")
     with open(file_path, 'r', encoding='utf-8') as csv_file:
         reader = csv.reader(csv_file)
         next(reader)
@@ -40,18 +40,20 @@ for file_path in glob.glob(r'*backend/sentiment_analysis/Ratings Data/*.csv'):
         for row in reader:
             hashMapProf[row[0]].update({'rating': float(row[1])})
 
-for file_path in glob.glob('*backend\class_and_pre-recs\*.csv'):
+"""for file_path in glob.glob(r'*backend/class_and_pre-recs/*.csv'):
     with open(file_path, 'r', encoding='utf-8') as csv_file:
         reader = csv.reader(csv_file)
         next(reader)
 
         for row in reader:
-            hashMapCourse[row[0]].update({'summary': row[1], 'rating': float(row[2])})
+            hashMapCourse[row[0]].update({'summary': row[1], 'rating': float(row[2])})"""
+
+
 
 courses = ['Chemistry', 'Physics', 'Math', 'Computer Science', 'Engineering']
 
 for course in courses:
-    for file_path in glob.glob(r'backend/Grade-ient_SQI/courses/{course}/*.csv'):
+    for file_path in glob.glob(f'backend/Grade-ient_SQI/courses/{course}/*.csv'):
         #print(file_path)
 
         with open(file_path, 'r', encoding='utf-8') as csv_file:
@@ -67,11 +69,11 @@ for course in courses:
                 #print('in here')
                 for row in reader:
                     hashMapCourse[row[0]].update({'SQI': float(row[2]), 'course_name': row[1]})
-print(hashMapCourse)
+#print(hashMapCourse)
 
-print(hashMapProf)
+#print(hashMapProf)
 
-print(hashMapProf)
+#print(hashMapProf)
 try:
     with conn.cursor() as cur:
         execute_batch(cur, """
@@ -89,7 +91,7 @@ conn.commit()
 
 
 for course in courses:
-    for file_path in glob.glob(r'backend\Grade-ient_SQI\courses\{course}\*.csv'):
+    for file_path in glob.glob(f'backend/Grade-ient_SQI/courses/{course}/*.csv'):
 
         with open(file_path, 'r', encoding='utf-8') as csv_file:
             reader = csv.reader(csv_file)
@@ -115,7 +117,27 @@ for course in courses:
                 #   print("encountered something that doesn't exist")
                  #   continue
 
-        
+for file_path in glob.glob(r'*backend/class_and_pre-rec_scraper/data/course_prereqs/*.csv'):
+    print('IN HERERERE')
+    with open(file_path, 'r', encoding='utf-8') as csv_file:
+        reader = csv.reader(csv_file)
+        next(reader)
+
+        for row in reader:
+           # print(row)
+            with conn.cursor() as cur:
+
+                cur.execute("SELECT id FROM Class WHERE course_code ILIKE %s", (f'%:{row[0]}',))
+                class_id = cur.fetchone()
+
+                cur.execute("SELECT id FROM Class WHERE course_code ILIKE %s", (f'%:{row[2]}',))
+                pre_req_id = cur.fetchone()
+
+                if class_id and pre_req_id:
+                    cur.execute("INSERT INTO Pre_Reqs (class_id, pre_req_group, pre_req_id) VALUES (%s, %s, %s) ON CONFLICT (class_id, pre_req_id) DO NOTHING",
+                               (class_id[0], row[1], pre_req_id[0]))
+                else:
+                    print(f"Class or pre-requisite not found for {row[0]} or {row[2]}")
 
 print("Connected to PostgreSQL!")
 conn.commit()

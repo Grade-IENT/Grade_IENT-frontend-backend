@@ -4,9 +4,10 @@ CREATE TABLE Class(
     id SERIAL PRIMARY KEY,
     course_code VARCHAR(10) UNIQUE NOT NULL,
     course_name VARCHAR(100) NOT NULL,
-    pre_req INT references Class(id) ON DELETE SET NULL,
+    --pre_req INT references Class(id) ON DELETE SET NULL,
     co_req INT references Class(id) ON DELETE SET NULL,
-    SQI DOUBLE PRECISION
+    SQI DOUBLE PRECISION,
+    pre_req_group INT
 
 );
 
@@ -15,6 +16,15 @@ CREATE TABLE UserAccount(
     id SERIAL PRIMARY KEY,
     username VARCHAR(100) UNIQUE NOT NULL,
     userPassword VARCHAR(100) NOT NULL
+
+);
+
+CREATE TABLE Pre_Reqs(
+
+    class_id INT references Class(id) ON DELETE CASCADE,
+    pre_req_id INT references Class(id) ON DELETE CASCADE,
+    pre_req_group INT,
+    PRIMARY KEY(class_id, pre_req_id)
 
 );
 
