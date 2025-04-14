@@ -31,7 +31,7 @@ from copy import deepcopy
 
 # Constants
 DATA_DIR = Path("backend/4_Year_input_Data")
-AP_CREDIT_CSV = "/Users/mahirshah/HonorsAcademy/Grade_IENT-frontend-backend/backend/4_Year_input_Data/rutgers_ap_credits.csv"
+AP_CREDIT_CSV = "backend/4_Year_input_Data/rutgers_ap_credits.csv"
 COURSE_RE = re.compile(r"(\d{3}:[0-9xX]{3})", re.IGNORECASE)
 
 DEFAULT_MIN_CR = 12
@@ -91,7 +91,7 @@ def load_catalog(csv_path: Path) -> None:
     prereq_of = cat["Prereq"].to_dict()
 
 # AP Credit Handler Functions
-ap_df = pd.read_csv(AP_CREDIT_CSV, dtype=str)
+ap_df = pd.read_csv("../"+AP_CREDIT_CSV, dtype=str)
 ap_df["Score"] = pd.to_numeric(ap_df["Score"], errors="coerce")
 
 def ap_fulfilled(ap_scores: Dict[str, int]) -> set[str]:
