@@ -21,6 +21,8 @@ hashMapCourse = defaultdict(dict)
 
 
 for file_path in glob.glob(r'*backend/rmp-scraper/Summarized_Reviews/*.csv'):
+    if 'cut.csv' not in file_path:
+        continue
     with open(file_path, 'r', encoding='utf-8') as csv_file:
         reader = csv.reader(csv_file)
         next(reader)
@@ -92,7 +94,6 @@ conn.commit()
 
 for course in courses:
     for file_path in glob.glob(f'backend/Grade-ient_SQI/courses/{course}/*.csv'):
-
         with open(file_path, 'r', encoding='utf-8') as csv_file:
             reader = csv.reader(csv_file)
             next(reader)
