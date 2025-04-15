@@ -1,45 +1,44 @@
-Year,Semester,Course Code,Course Name,Prerequisites
-Freshman,Fall,160:159,General Chemistry for Engineers,640:103 or 640:104 or 640:112 or 640:115 or 640:135 or 640:151
-Freshman,Fall,160:171,Intro to Experimentation,160:159 or 160:161 or 160:163 or 160:165 or 160:115 or 160:115
-Freshman,Fall,355:101,Expository Writing,
-Freshman,Fall,440:100,Engineering Orientation,
-Freshman,Fall,640:151,Calculus I,640:113 and 640:114 and 640:112 or 640:113 and 640:114 and 640:115
-Freshman,Fall,750:123,Analytical Physics IA,
-Freshman,Fall,Humanities Elective,Humanities/Social Science Elective,
-Freshman,Spring,160:160,General Chemistry for Engineers,640:112 and 640:115 and 160:159
-Freshman,Spring,440:127,Intro to Computers for Engineers,
-Freshman,Spring,440:221,Engineering Mechanics (Statics),640:151 and 640:121 and 640:135 and 750:123 or 640:151 and 640:191 and 640:135 and 750:203 or 750:202 and 750:271 and 750:115 and 640:151 or 640:151 and 640:191 and 640:135 and 750:271 or 640:151 and 640:121 and 640:135 and 750:213 or 640:151 and 640:135 and 640:121 and 750:131
-Freshman,Spring,640:152,Calculus II,640:135 or 640:151 or 640:135 or 640:155 or 640:121 or 640:135
-Freshman,Spring,750:124,Analytical Physics IB,750:115 or 750:123
-Sophomore,Fall,635:201,Intro to Materials Science,
-Sophomore,Fall,640:244,Differential Equations,640:243 or 640:251 or 640:291 or 640:235 or 640:235
-Sophomore,Fall,750:227,Analytical Physics IIA,750:116 and 750:124 and 750:271 and 640:152
-Sophomore,Fall,750:229,Analytical Physics IIA Lab,750:116 or 750:124 or 750:201 or 750:203 or 750:271 or 750:213 or 750:131 or 750:203 or 750:203
-Sophomore,Fall,Humanities Elective,Humanities/Social Science Elective,
-Sophomore,Fall,635:202,Materials Processing,
-Sophomore,Fall,540:343,Engineering Economics,
-Sophomore,Spring,635:210,Structure and Properties of Materials,
-Sophomore,Spring,635:220,Thermodynamics of Materials,
-Sophomore,Spring,635:222,Materials Characterization Techniques,
-Sophomore,Spring,635:230,Mechanical Behavior of Materials,
-Sophomore,Spring,Science Elective,Science Elective,
-Junior,Fall,635:305,Electronic and Optical Materials,160:160 and 160:162 and 640:251
-Junior,Fall,635:320,Biomaterials,
-Junior,Fall,635:321,Nanomaterials,
-Junior,Fall,635:330,Polymeric Materials,
-Junior,Fall,635:340,Energy Storage Materials,
-Junior,Fall,Technical Elective,Technical Elective,
-Junior,Fall,Technical Elective,Technical Elective,
-Junior,Spring,635:410,Ceramic Materials,
-Junior,Spring,635:420,Metals and Alloys,
-Junior,Spring,635:430,Composite Materials,
-Junior,Spring,635:440,Advanced Materials Processing,
-Senior,Fall,635:450,Failure Analysis,
-Senior,Fall,635:460,Corrosion Engineering,
-Senior,Fall,Departmental Elective,Departmental Elective,
-Senior,Fall,Departmental Elective,Departmental Elective,
-Senior,Fall,Technical Elective,Technical Elective,
-Senior,Spring,635:490,Senior Design I,
-Senior,Spring,635:491,Senior Design II,
-Senior,Spring,Departmental Elective,Departmental Elective,
-Senior,Spring,Technical Elective,Technical Elective,
+Course Code,Course Name,Prerequisites,Credits,Semester Offered,SQI
+160:159,General Chemistry for Engineers,640:103 or 640:104 or 640:112 or 640:115 or 640:135 or 640:151,,,3.21
+160:171,Intro to Experimentation,160:159 or 160:161 or 160:163 or 160:165 or 160:115 or 160:115,,,4.08
+355:101,College Writing,,3," Spring, Fall", 3
+440:101, Introduction to Data-Driver Design for Engineering Applications,,2, Fall, 5
+440:102, Introduction to Data-Driver Design for Engineering Applications II,,2, Spring, 5
+640:151,Calculus I,640:113 and 640:114 and 640:112 or 640:113 and 640:114 and 640:115,,,3.94
+750:123,Analytical Physics IA,,,,4.21
+Humanities Elective,Humanities/Social Science Elective,,,,
+160:160,General Chemistry for Engineers,640:112 and 640:115 and 160:159,,,3.0
+440:221,Engineering Mechanics (Statics),640:151 and 640:121 and 640:135 and 750:123 or 640:151 and 640:191 and 640:135 and 750:203 or 750:202 and 750:271 and 750:115 and 640:151 or 640:151 and 640:191 and 640:135 and 750:271 or 640:151 and 640:121 and 640:135 and 750:213 or 640:151 and 640:135 and 640:121 and 750:131,,,3.54
+640:152,Calculus II,640:135 or 640:151 or 640:135 or 640:155 or 640:121 or 640:135,,,4.01
+750:124,Analytical Physics IB,750:115 or 750:123,,,4.23
+635:201,Intro to Materials Science,,,,
+640:244,Differential Equations,640:243 or 640:251 or 640:291 or 640:235 or 640:235,,,4.08
+750:227,Analytical Physics IIA + Lab,750:116 and 750:124 and 750:271 and 640:152,3,Fall,3.78
+Humanities Elective,Humanities/Social Science Elective,,,,
+635:202,Materials Processing,,,,
+540:343,Engineering Economics,,,,4.52
+635:210,Structure and Properties of Materials,,,,
+635:220,Thermodynamics of Materials,,,,
+635:222,Materials Characterization Techniques,,,,
+635:230,Mechanical Behavior of Materials,,,,
+Science Elective,Science Elective,,,,
+635:305,Electronic and Optical Materials,160:160 and 160:162 and 640:251,,,2.77
+635:320,Biomaterials,,,,4.19
+635:321,Nanomaterials,,,,
+635:330,Polymeric Materials,,,,
+635:340,Energy Storage Materials,,,,
+Technical Elective,Technical Elective,,,,
+Technical Elective,Technical Elective,,,,
+635:410,Ceramic Materials,,,,
+635:420,Metals and Alloys,,,,
+635:430,Composite Materials,,,,
+635:440,Advanced Materials Processing,,,,3.85
+635:450,Failure Analysis,,,,
+635:460,Corrosion Engineering,,,,
+Departmental Elective,Departmental Elective,,,,
+Departmental Elective,Departmental Elective,,,,
+Technical Elective,Technical Elective,,,,
+635:490,Senior Design I,,,,
+635:491,Senior Design II,,,,
+Departmental Elective,Departmental Elective,,,,
+Technical Elective,Technical Elective,,,,

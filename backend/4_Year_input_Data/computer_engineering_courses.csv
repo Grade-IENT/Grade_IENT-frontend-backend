@@ -6,7 +6,7 @@ Course Code,Course Name,Prerequisites,Credits,Semester Offered,SQI
 640:151,Calculus I,640:113 and 640:114 and 640:112 or 640:113 and 640:114 and 640:115,4,Spring,3.94
 750:123,Analytical Physics I, ,2,Fall,4.21
 Humanities Elective,Humanities/Social Science Elective,,3," Spring, Fall", 4
-440:101, Introduction to Data-Driver Design for Engineering Applications,,2, Spring, 5
+440:102, Introduction to Data-Driver Design for Engineering Applications,440:101,2, Spring, 5
 440:221,Engineering Mechanics (Statics),640:151 and 640:121 and 640:135 and 750:123 or 640:151 and 640:191 and 640:135 and 750:203 or 750:202 and 750:271 and 750:115 and 640:151 or 640:151 and 640:191 and 640:135 and 750:271 or 640:151 and 640:121 and 640:135 and 750:213 or 640:151 and 640:135 and 640:121 and 750:131,3,Spring,3.54
 640:152,Calculus II,640:135 or 640:151 or 640:135 or 640:155 or 640:121 or 640:135,4," Spring, Fall",4.01
 750:124,Analytical Physics IB,750:115 or 750:123,2,Spring,4.23
