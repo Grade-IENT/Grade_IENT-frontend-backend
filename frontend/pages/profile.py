@@ -1,5 +1,6 @@
 import streamlit as st
 import psycopg2
+import pandas as pd
 
 # --- DB Connection ---
 def get_connection():
@@ -76,49 +77,65 @@ with st.container():
 
     st.write("---")
 
-    with st.expander("Four Year Plan"):
-        with get_connection() as conn:
-            cur = conn.cursor()
-            cur.execute("""
-                SELECT c.course_code, c.course_name, pc.year, pc.semester, c.sqi, c.id
-                FROM PlanCourse pc
-                JOIN Class c ON pc.class_id = c.id
-                WHERE pc.user_id = %s
-                ORDER BY pc.year, pc.semester, c.course_code
-            """, (st.session_state["user_id"],))
-            rows = cur.fetchall()
+with st.expander("Four Year Plan"):
+    with get_connection() as conn:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT year, semester, course_display
+            FROM PlanCourse
+            WHERE user_id = %s
+            ORDER BY year, semester, id
+        """, (st.session_state["user_id"],))
+        rows = cur.fetchall()
 
-        if not rows:
-            st.info("No saved plan found. Go to the Four Year Plan tab to generate one.")
-        else:
-            # Organize by year and semester
-            plan = { (year, semester): [] for year in range(1, 5) for semester in ("Fall", "Spring") }
-            for code, name, year, semester, sqi, _ in rows:
-                plan[(year, semester)].append({
-                    "Course Code": code,
-                    "Course Name": name,
-                    "SQI": sqi
-                })
+    if not rows:
+        st.info("No saved plan found. Go to the Four Year Plan tab to generate one.")
+    else:
+        # Organize by year and semester
+        plan = { (year, semester): [] for year in range(1, 5) for semester in ("Fall", "Spring") }
+        for year, semester, display in rows:
+            plan[(year, semester)].append(display)
 
-            for year in range(1, 5):
-                st.subheader(f"Year {year}")
-                col_fall, col_spring = st.columns(2)
-                for semester, col in zip(("Fall", "Spring"), (col_fall, col_spring)):
-                    with col:
-                        sem_courses = plan[(year, semester)]
-                        st.markdown(f"**{semester}**")
-                        if not sem_courses:
-                            st.write("_No courses scheduled._")
+        for year in range(1, 5):
+            st.subheader(f"Year {year}")
+            col_fall, col_spring = st.columns(2)
+            for semester, col in zip(("Fall", "Spring"), (col_fall, col_spring)):
+                with col:
+                    sem_courses = plan[(year, semester)]
+                    st.markdown(f"**{semester}**")
+
+                    if not sem_courses:
+                        st.write("_No courses scheduled._")
+                    else:
+                        parsed = []
+                        for entry in sem_courses:
+                            try:
+                                code, rest = entry.split(' ', 1)
+                                name, rest = rest.rsplit('(', 1)
+                                credits_part, sqi_part = rest.rstrip(')').split(', SQI ')
+                                credits = credits_part.strip().replace('cr', '').strip()
+                                sqi = float(sqi_part.strip())
+                                parsed.append({
+                                    "Course Code": code.strip(),
+                                    "Course Name": name.strip(),
+                                    "Credits": int(credits),
+                                    "SQI": sqi
+                                })
+                            except Exception:
+                                parsed.append({
+                                    "Course Code": "",
+                                    "Course Name": entry.strip(),
+                                    "Credits": "",
+                                    "SQI": ""
+                                })
+
+                        df = pd.DataFrame(parsed)
+                        df = df[["Course Code", "Course Name", "Credits", "SQI"]]
+                        st.dataframe(df.style.hide(axis="index"), hide_index=True, use_container_width=True)
+
+                        valid_sqis = [row["SQI"] for row in parsed if isinstance(row["SQI"], float)]
+                        if valid_sqis:
+                            avg_sqi = sum(valid_sqis) / len(valid_sqis)
+                            st.markdown(f"Average SQI: **{avg_sqi:.2f}**")
                         else:
-                            df = pd.DataFrame(sem_courses)
-                            df["Credits"] = "N/A"  # Placeholder if credits not stored
-                            df = df[["Course Code", "Course Name", "Credits", "SQI"]]
-                            df["SQI"] = df["SQI"].apply(lambda x: f"{x:.2f}" if isinstance(x, float) else "")
-                            st.dataframe(df.style.hide(axis='index'), hide_index=True, use_container_width=True)
-
-                            valid_sqis = [c["SQI"] for c in sem_courses if isinstance(c["SQI"], float)]
-                            if valid_sqis:
-                                avg_sqi = sum(valid_sqis) / len(valid_sqis)
-                                st.markdown(f"Average SQI: **{avg_sqi:.2f}**")
-                            else:
-                                st.markdown("Average SQI: **N/A**")
+                            st.markdown("Average SQI: **N/A**")

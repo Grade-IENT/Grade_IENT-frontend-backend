@@ -54,5 +54,6 @@ CREATE TABLE PlanCourse (
     class_id INT REFERENCES Class(id) ON DELETE CASCADE,
     year INT CHECK (year BETWEEN 1 AND 4),
     semester VARCHAR(10) CHECK (semester IN ('Fall', 'Spring')),
+    course_display TEXT,
     UNIQUE(user_id, class_id)
 );

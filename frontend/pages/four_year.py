@@ -91,7 +91,6 @@ st.markdown("### Optional: Add AP Credits")
 chosen = st.multiselect("Select AP Exams", exams)
 ap_scores = {exam: int(st.slider(f"{exam} score", 1, 5, 5, key=exam)) for exam in chosen}
 
-build_btn = st.button("Generate Plan")
 
 # DB connection function
 def get_connection():
@@ -102,52 +101,70 @@ def get_connection():
     )
 
 # Save to DB logic
+if 'clicked' not in st.session_state:
+    st.session_state.clicked = {1:False,2:False}
+
+def clicked(button):
+    st.session_state.clicked[button] = True
+
+build_btn = st.button("Build Plan", use_container_width=True, on_click=clicked, args=[1])
+
 
 def save_plan_to_db(df):
-    print("hi")
     if "user_id" not in st.session_state:
         st.error("You must be logged in to save your plan.")
         return
 
-    inserted_ids = set()
-
     try:
         with get_connection() as conn:
             cur = conn.cursor()
-            print(st.session_state["user_id"])
-            # Clear existing saved plan
+
+            # Clear previous saved plan
             cur.execute("DELETE FROM PlanCourse WHERE user_id = %s", (st.session_state["user_id"],))
+
+            total_inserted = 0
 
             for sem_idx, column in enumerate(df.columns):
                 year = (sem_idx // 2) + 1
                 semester = "Fall" if sem_idx % 2 == 0 else "Spring"
 
                 for entry in df[column].dropna():
+                    display_str = entry.strip()
+                    course_code = None
+                    class_id = None
+
                     try:
-                        course_code = entry.split()[0]
-                        cur.execute("SELECT id FROM Class WHERE course_code = %s", (course_code,))
-                        result = cur.fetchone()
-                        if result:
-                            class_id = result[0]
-                            # Only insert if not already added
-                            if class_id not in inserted_ids:
-                                cur.execute(
-                                    "INSERT INTO PlanCourse (user_id, class_id, year, semester) VALUES (%s, %s, %s, %s)",
-                                    (st.session_state["user_id"], class_id, year, semester)
-                                )
-                                inserted_ids.add(class_id)
+                        # Try to get course_code like "332:231"
+                        parts = entry.split()
+                        if parts and ":" in parts[0]:
+                            course_code = parts[0]
+                            cur.execute("SELECT id FROM Class WHERE course_code = %s", (course_code,))
+                            result = cur.fetchone()
+                            if result:
+                                class_id = result[0]
+
+                        # Insert every instance — including duplicates
+                        cur.execute(
+                            """
+                            INSERT INTO PlanCourse (user_id, class_id, year, semester, course_display)
+                            VALUES (%s, %s, %s, %s, %s)
+                            """,
+                            (st.session_state["user_id"], class_id, year, semester, display_str)
+                        )
+                        total_inserted += 1
+
                     except Exception as e:
                         st.warning(f"⚠️ Could not save entry: {entry} — {e}")
 
             conn.commit()
-            st.success("✅ Plan saved to your account!")
+            st.success(f"✅ Plan saved! {total_inserted} entries added.")
 
     except psycopg2.Error as e:
         st.error(f"❌ Database error: {e.pgerror}")
 
 # ─────────────── Generate Plan ───────────────
-st.session_state["build_btn"] = False
-if build_btn and major in majors:
+
+if st.session_state.clicked[1] and major in majors:
     st.session_state["build_btn"] = True
     csv_path = DATA_DIR / MAJOR_CSV[major]
     if not csv_path.exists():
@@ -212,7 +229,6 @@ if build_btn and major in majors:
         
         if st.session_state.get("build_btn"):
             if st.button("Save Plan to Account"):
-                print('hi')
                 save_plan_to_db(df)
 
     
