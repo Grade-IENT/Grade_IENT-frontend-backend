@@ -1,7 +1,14 @@
 import streamlit as st
+import streamlit as st
+from PIL import Image
+import base64
 
 st.set_page_config(page_title= "Gradient", page_icon=":tada:", layout ="wide", initial_sidebar_state="collapsed")
- 
+
+st.markdown(
+    f'<a href="/"><img class="logo" src="data:image/png;base64,{base64.b64encode(open("logo.png", "rb").read()).decode()}" alt="Logo"></a>',
+    unsafe_allow_html=True
+)
 
 # use CSS
 with open('./style/style.css') as f:

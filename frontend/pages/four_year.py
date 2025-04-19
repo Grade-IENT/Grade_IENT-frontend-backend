@@ -1,8 +1,15 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import base64
 
 st.set_page_config(page_title= "Gradient - Four Year Plan", page_icon=":tada:", layout ="wide", initial_sidebar_state="collapsed")
+
+st.markdown(
+    f'<a href="/"><img class="logo" src="data:image/png;base64,{base64.b64encode(open("logo.png", "rb").read()).decode()}" alt="Logo"></a>',
+    unsafe_allow_html=True
+)
+
 st.markdown(
     """
     <style>
@@ -40,8 +47,6 @@ with st.container():
 
 
 with st.container():
-    
-
     st.title("Four Year Plan")
     Major = st.selectbox(
         'Pick a Major:',
@@ -51,8 +56,6 @@ with st.container():
     # major = text_search = st.text_input("Search up a major for the 4 year plan!")
     # if major: 
     #     st.write("4 year schedule for " , major)
-
-
 
 
 #year 1 and 2
@@ -96,7 +99,6 @@ with st.container():
             st.table(df)
 
 # year 4 and 4 
-
 
 with st.container():
     
