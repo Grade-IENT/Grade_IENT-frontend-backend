@@ -27,9 +27,6 @@ st.set_page_config(page_title=f"Gradient - {username}'s Profile", page_icon=":ta
 st.markdown(
     """
     <style>
-        div[data-testid="collapsedControl"] {
-            visibility: hidden;
-        }
         #logout-menu {
             position: fixed;
             top: 1.2rem;
