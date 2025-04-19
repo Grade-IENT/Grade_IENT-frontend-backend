@@ -1,4 +1,8 @@
 import streamlit as st
+import pandas as pd
+import psycopg2
+
+
 import base64
 
 st.set_page_config(page_title= "Gradient - Professors", page_icon=":tada:", layout ="wide", initial_sidebar_state="collapsed")
@@ -46,7 +50,13 @@ with st.container():
 
      st.write("---")
 
-
+def get_connection():
+    return psycopg2.connect(
+        host="localhost",
+        database="gradient",
+        user="postgres",  
+        #password="password"  # Replace with your password
+    )
 
 with st.container():
 
@@ -56,8 +66,42 @@ with st.container():
     with image_column:
         st.image("search.png", caption= None, width= 100)
 
-
     with search_column:
-        prof = text_search = st.text_input("Search up your professors and find their ratings!")
-        if prof: 
-            st.write("You searched Professor " , prof)
+        prof = st.text_input("Search up your professors and find their ratings!")
+
+        if prof:
+            st.write("You searched Professor:", prof)
+
+            conn = get_connection()
+            cur = conn.cursor()
+
+
+            query = """
+            SELECT prof_name, netid, metrics, SQI, summary
+            FROM professor
+            WHERE LOWER(prof_name) LIKE %s
+            """
+            cur.execute(query, (f"%{prof.lower()}%",))
+            rows = cur.fetchall()
+
+            if rows:
+                df = pd.DataFrame(rows, columns=["Professor Name", "NetID", "Metrics", "SQI", "Summary"])
+                print(rows)
+                for _, row in df.iterrows():
+                    with st.container():
+                        st.markdown(f"""
+                        <div style="background-color:#f5f5f5;padding:15px;border-radius:10px;margin-bottom:10px">
+                        <h5>{row['Professor Name']}</h5>
+                        <p><strong>NetID:</strong> {row['NetID'] or 'N/A'}  
+                        <br><strong>Metrics:</strong> {row['Metrics']:.2f}  
+                        <br><strong>SQI:</strong> {row['SQI'] or 'N/A'}  
+                        <br><strong>Summary:</strong> {row['Summary']}</p>
+                        </div>
+                        """, unsafe_allow_html=True)
+            else:
+                st.warning("No professors found matching that name.")
+
+            cur.close()
+            conn.close()
+
+
