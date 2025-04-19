@@ -1,7 +1,9 @@
 import streamlit as st
 import pandas as pd
+import psycopg2
 from pathlib import Path
 import sys
+
 
 # ─────────────── Add repo root to path ───────────────
 sys.path.append(str(Path(__file__).resolve().parents[2]))
@@ -21,11 +23,11 @@ MAJOR_CSV = {
     "Civil Engineering":                     "civil_engineering_courses.csv",
     "Environmental Engineering":             "environmental_engineering_courses.csv",
     "Computer Engineering":                  "computer_engineering_courses.csv",
-    "Electrical Engineering":               "electrical_engineering_courses.csv",
+    "Electrical Engineering":                "electrical_engineering_courses.csv",
     "Industrial and Systems Engineering":    "industrial_systems_engineering_courses.csv",
     "Materials Science Engineering":         "materials_science_engineering_courses.csv",
     "Mechanical Engineering":                "mechanical_engineering_courses.csv",
-    "Packaging Engineering":                "packaging_engineering_courses.csv",
+    "Packaging Engineering":                 "packaging_engineering_courses.csv",
 }
 
 # ─────────────── Page setup ───────────────
@@ -38,49 +40,19 @@ def local_css(file_name):
 
 local_css("style/style.css")
 
-# Additional inline fixes
 st.markdown("""
 <style>
-/* Hide sidebar toggle */
-div[data-testid="collapsedControl"] {
-    visibility: hidden;
-}
-
-/* AP slider box */
-div[data-baseweb="slider"] {
-    background-color: white !important;
-    color: black !important;
-    border-radius: 6px;
-    padding: 8px;
-}
-
-/* Replace green success msg */
-div[data-testid="stMarkdownContainer"] > div[style*="background-color: rgb(220, 252, 231)"] {
-    background-color: transparent !important;
-    color: black !important;
-    font-weight: 600;
-}
-</style>
-""", unsafe_allow_html=True)
-st.markdown("""
-<style>
-/* Streamlit's AP slider container */
-div[data-baseweb="slider"] {
-    background-color: white !important;
-    padding: 10px;
-    border-radius: 8px;
-}
-
-/* WebKit slider track + thumb */
-input[type="range"] {
-    accent-color: black !important;
-}
-
-/* Ensure labels (1–5) are black */
-div[data-baseweb="slider"] span {
-    color: black !important;
-    font-weight: 500;
-}
+    div[data-testid="collapsedControl"] { visibility: hidden; }
+    div[data-baseweb="slider"] {
+        background-color: white !important;
+        padding: 10px;
+        border-radius: 8px;
+    }
+    input[type="range"] { accent-color: black !important; }
+    div[data-baseweb="slider"] span {
+        color: black !important;
+        font-weight: 500;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -103,14 +75,11 @@ st.title("Four Year Plan")
 
 majors = list(MAJOR_CSV.keys())
 col1, col2 = st.columns(2)
-
 major = st.selectbox("Select Major", ["Select a major"] + majors)
 
 cr_col1, cr_col2 = st.columns([1, 1])
-
 with cr_col1:
     min_cr = st.number_input("Min Credits / Semester", value=DEFAULT_MIN_CR, min_value=6, max_value=18)
-
 with cr_col2:
     max_cr = st.number_input("Max Credits / Semester", value=DEFAULT_MAX_CR, min_value=min_cr, max_value=21)
 
@@ -124,8 +93,62 @@ ap_scores = {exam: int(st.slider(f"{exam} score", 1, 5, 5, key=exam)) for exam i
 
 build_btn = st.button("Generate Plan")
 
+# DB connection function
+def get_connection():
+    return psycopg2.connect(
+        host="localhost",
+        database="gradient",
+        user="postgres"
+    )
+
+# Save to DB logic
+
+def save_plan_to_db(df):
+    print("hi")
+    if "user_id" not in st.session_state:
+        st.error("You must be logged in to save your plan.")
+        return
+
+    inserted_ids = set()
+
+    try:
+        with get_connection() as conn:
+            cur = conn.cursor()
+            print(st.session_state["user_id"])
+            # Clear existing saved plan
+            cur.execute("DELETE FROM PlanCourse WHERE user_id = %s", (st.session_state["user_id"],))
+
+            for sem_idx, column in enumerate(df.columns):
+                year = (sem_idx // 2) + 1
+                semester = "Fall" if sem_idx % 2 == 0 else "Spring"
+
+                for entry in df[column].dropna():
+                    try:
+                        course_code = entry.split()[0]
+                        cur.execute("SELECT id FROM Class WHERE course_code = %s", (course_code,))
+                        result = cur.fetchone()
+                        if result:
+                            class_id = result[0]
+                            # Only insert if not already added
+                            if class_id not in inserted_ids:
+                                cur.execute(
+                                    "INSERT INTO PlanCourse (user_id, class_id, year, semester) VALUES (%s, %s, %s, %s)",
+                                    (st.session_state["user_id"], class_id, year, semester)
+                                )
+                                inserted_ids.add(class_id)
+                    except Exception as e:
+                        st.warning(f"⚠️ Could not save entry: {entry} — {e}")
+
+            conn.commit()
+            st.success("✅ Plan saved to your account!")
+
+    except psycopg2.Error as e:
+        st.error(f"❌ Database error: {e.pgerror}")
+
 # ─────────────── Generate Plan ───────────────
+st.session_state["build_btn"] = False
 if build_btn and major in majors:
+    st.session_state["build_btn"] = True
     csv_path = DATA_DIR / MAJOR_CSV[major]
     if not csv_path.exists():
         st.error(f"Catalog file not found: **{csv_path}**")
@@ -141,7 +164,6 @@ if build_btn and major in majors:
         for sem_idx, col in zip((year * 2, year * 2 + 1), (col_fall, col_spring)):
             with col:
                 sem_name = f"Semester {sem_idx + 1}"
-                # Parse each row into structured columns
                 raw_rows = df[sem_name].replace("", pd.NA).dropna().tolist()
 
                 parsed = []
@@ -158,8 +180,7 @@ if build_btn and major in majors:
                             "Credits": int(credits),
                             "SQI": sqi
                         })
-                    except Exception as e:
-                        # fallback: include unparsed string
+                    except Exception:
                         parsed.append({
                             "Course Code": "",
                             "Course Name": entry.strip(),
@@ -167,9 +188,8 @@ if build_btn and major in majors:
                             "SQI": ""
                         })
 
-                # Display structured table
                 parsed_df = pd.DataFrame(parsed)
-                parsed_df.columns = ["Course_Code", "Course_Name", "Credits", "SQI"]
+                parsed_df.columns = ["Course Code", "Course Name", "Credits", "SQI"]
 
                 st.markdown(f"**{sem_name}** — Total Credits: **{sem_credits[sem_idx]}**")
 
@@ -180,30 +200,23 @@ if build_btn and major in majors:
                 else:
                     st.markdown("Average SQI: **N/A**")
 
-                parsed_df = pd.DataFrame(parsed, index=None)
-                parsed_df.columns = ["Course Code", "Course Name", "Credits", "SQI"]
+                st.dataframe(parsed_df.style.hide(axis="index"), hide_index=True, use_container_width=True)
 
-                # Prevent word wrapping in table headers and cells
-                st.markdown("""
-                <style>
-                thead tr th, tbody tr td {
-                    white-space: nowrap !important;
-                    text-align: left !important;
-                }
-                thead tr th:nth-child(3),
-                thead tr th:nth-child(4),
-                tbody tr td:nth-child(3),
-                tbody tr td:nth-child(4) {
-                    text-align: center !important;
-                }
-                </style>
-                """, unsafe_allow_html=True)
+    # Download and Save buttons
+    col_dl, col_save = st.columns([2, 1])
+    with col_dl:
+        st.download_button("Download Plan as CSV",
+                           data=df.to_csv(index=False).encode(),
+                           file_name="four_year_plan.csv")
+    with col_save:
+        
+        if st.session_state.get("build_btn"):
+            if st.button("Save Plan to Account"):
+                print('hi')
+                save_plan_to_db(df)
 
-                st.dataframe(parsed_df.style.hide(axis="index"), hide_index = True,use_container_width=True)
-
-    st.download_button("Download Plan as CSV",
-                       data=df.to_csv(index=False).encode(),
-                       file_name="four_year_plan.csv")
-
+    
 elif build_btn:
     st.warning("Please select a valid major to continue.")
+
+

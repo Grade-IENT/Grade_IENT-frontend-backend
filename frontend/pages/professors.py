@@ -45,7 +45,7 @@ with st.container():
 def get_connection():
     return psycopg2.connect(
         host="localhost",
-        database="gradientdb",
+        database="gradient",
         user="postgres",  
         #password="password"  # Replace with your password
     )

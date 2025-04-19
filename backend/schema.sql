@@ -11,12 +11,11 @@ CREATE TABLE Class(
 
 );
 
-CREATE TABLE UserAccount(
-
+CREATE TABLE UserAccount (
     id SERIAL PRIMARY KEY,
     username VARCHAR(100) UNIQUE NOT NULL,
-    userPassword VARCHAR(100) NOT NULL
-
+    userPassword VARCHAR(255) NOT NULL, 
+    email VARCHAR(255) UNIQUE
 );
 
 CREATE TABLE Pre_Reqs(
@@ -47,4 +46,13 @@ CREATE TABLE Teaches(
     PRIMARY KEY(prof_id, class_id),
     SQI DOUBLE PRECISION
 
+);
+
+CREATE TABLE PlanCourse (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES UserAccount(id) ON DELETE CASCADE,
+    class_id INT REFERENCES Class(id) ON DELETE CASCADE,
+    year INT CHECK (year BETWEEN 1 AND 4),
+    semester VARCHAR(10) CHECK (semester IN ('Fall', 'Spring')),
+    UNIQUE(user_id, class_id)
 );

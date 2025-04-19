@@ -8,9 +8,9 @@ from psycopg2.extras import execute_batch
 
 conn = psycopg2.connect(
     host="localhost",
-    database="gradientdb",
+    database="gradient",
     user="postgres",
-    password="accountSqL01"
+   # password="accountSqL01"
 )
 cur = conn.cursor()
 
@@ -20,7 +20,7 @@ hashMapCourse = defaultdict(dict)
 
 
 
-for file_path in glob.glob(r'*backend/rmp-scraper/Summarized_Reviews/*.csv'):
+for file_path in glob.glob(f'backend/rmp-scraper/Summarized_Reviews/*.csv'):
     if 'cut.csv' not in file_path:
         continue
     with open(file_path, 'r', encoding='utf-8') as csv_file:
@@ -33,7 +33,7 @@ for file_path in glob.glob(r'*backend/rmp-scraper/Summarized_Reviews/*.csv'):
 
 
 
-for file_path in glob.glob(r'*backend/sentiment_analysis/Ratings Data/*.csv'):
+for file_path in glob.glob(f'backend/sentiment_analysis/Ratings Data/*.csv'):
     #print("HEHEHEHEHEHEHEHEHEEHEHEHEHEE")
     with open(file_path, 'r', encoding='utf-8') as csv_file:
         reader = csv.reader(csv_file)
@@ -71,11 +71,11 @@ for course in courses:
                 #print('in here')
                 for row in reader:
                     hashMapCourse[row[0]].update({'SQI': float(row[2]), 'course_name': row[1]})
-#print(hashMapCourse)
+print(hashMapCourse)
 
-#print(hashMapProf)
+print(hashMapProf)
 
-#print(hashMapProf)
+print(hashMapProf.items())
 try:
     with conn.cursor() as cur:
         execute_batch(cur, """
@@ -118,7 +118,7 @@ for course in courses:
                 #   print("encountered something that doesn't exist")
                  #   continue
 
-for file_path in glob.glob(r'*backend/class_and_pre-rec_scraper/data/course_prereqs/*.csv'):
+for file_path in glob.glob(f'backend/class_and_pre-rec_scraper/data/course_prereqs/*.csv'):
     print('IN HERERERE')
     with open(file_path, 'r', encoding='utf-8') as csv_file:
         reader = csv.reader(csv_file)
