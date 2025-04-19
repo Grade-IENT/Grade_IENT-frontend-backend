@@ -24,15 +24,6 @@ with get_connection() as conn:
 
 # --- Page Config & CSS ---
 st.set_page_config(page_title=f"Gradient - {username}'s Profile", page_icon=":tada:", layout="wide", initial_sidebar_state="collapsed")
-import base64
-
-st.set_page_config(page_title= "Gradient - Your Profile", page_icon=":tada:", layout ="wide", initial_sidebar_state="collapsed")
-st.markdown(
-    f'<a href="/"><img class="logo" src="data:image/png;base64,{base64.b64encode(open("logo.png", "rb").read()).decode()}" alt="Logo"></a>',
-    unsafe_allow_html=True
-)
-
-
 st.markdown(
     """
     <style>

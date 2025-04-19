@@ -75,7 +75,11 @@ if st.button("Log In"):
 
         if result and bcrypt.checkpw(password.encode(), result[1].encode()):
             st.session_state["user_id"] = result[0]
-            st.success("✅ Logged in successfully!")
+         #   st.experimental_rerun()  # Rerun first to trigger switch_page
+
+# Then redirect at the top of the file (or just below the login logic)
+if "user_id" in st.session_state:
+    st.switch_page("pages/profile.py")
 
 # use CSS
 with open('./style/style.css') as f:
