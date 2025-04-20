@@ -11,7 +11,11 @@
     margin-bottom: 16px;
     resize: vertical;
     font-family: 'Roboto', sans-serif; /* Apply Roboto font */
+    background-color: white !important; /* Set background to white */
+    border: 1px solid #d1a6e1 !important; /* Light purple border */
+    color: #333 !important; /* Set text color to black or dark gray */
 }
+
 
 /* Display the logo normally on the left side */
 img {
@@ -24,9 +28,49 @@ img {
     z-index: 9999;  /* Ensure it's on top of other content */
 }
 
-.stButton>button:hover {
-    background-color: #7a59d8;  /* Slightly darker purple */
+/* Override the background of input fields to prevent lilac */
+.stTextInput input, .stPasswordInput input, .stTextArea textarea {
+    background-color: white !important;  /* Set background to white */
+    border: 1px solid #D1A7E5 !important; /* Lilac border color */
+    color: #333333 !important;  /* Set text color to dark gray */
 }
+
+/* Focus state for input fields */
+.stTextInput input:focus, .stPasswordInput input:focus, .stTextArea textarea:focus {
+    border-color: black !important;  /* Focus border color */
+    outline: none !important;
+}
+
+/* Buttons */
+.stButton > button {
+    background-color: #D1A3E5     !important;  /* Blue button color */
+    color: black !important;
+    border-radius: 5px !important;  /* Rounded corners */
+}
+
+.stButton > button:hover {
+    background-color: B7A4E8 !important;  /* Darker blue on hover */
+    border-color: black !important;  /* Focus border color */
+
+}
+
+/* Sidebar background color */
+div[data-testid="stSidebar"] {
+    background-color: #D1A7E5 !important;  /* Lilac sidebar */
+    border-color: black !important;  /* Focus border color */
+}
+
+
+/*
+.stButton>button:hover {
+    background-color: #59d879;  /* Slightly darker purple 
+}
+
+.stButton>button {
+    background-color: #2D4D8B;  /* Slightly darker purple 
+} 
+
+*/
 
 /* Hiding footer and header elements */
 footer, header, .stApp > header {
@@ -50,32 +94,6 @@ body {
     background: white !important; /* White background for the right side */
 }
 
-/* Sidebar Customization */
-div[data-testid="stSidebar"] {
-    background-color: white !important; /* Set the sidebar background to white */
-}
-
-div[data-testid="stSidebar"] .css-1d391kg {
-    background-color: white !important; /* Ensure the inner sidebar area is white */
-}
-
-div[data-testid="stSidebar"] .css-1g7e2f0 {
-    background-color: white !important; /* Set button background color in sidebar to white */
-    color: #333; /* Text color for buttons */
-}
-
-div[data-testid="stSidebar"] .css-1g7e2f0:hover {
-    background-color: #f1f1f1 !important; /* Hover effect */
-}
-
-div[data-testid="stSidebar"] .sidebar-header {
-    background-color: white !important; /* Make sure the sidebar header is white */
-}
-
-div[data-testid="stSidebar"] .css-1g7e2f0 > button {
-    background-color: white !important; /* Apply white background to sidebar buttons */
-    color: #333 !important; /* Button text color */
-}
 
 /* Custom Input Field focus state */
 .stTextInput input:focus, .stPasswordInput input:focus, .stTextArea textarea:focus {

@@ -62,9 +62,9 @@ with st.container():
             </div>
             """, unsafe_allow_html=True
         )
-        
-        username = st.text_input("Username or email")
-        password = st.text_input("Password", type="password")
+ 
+        username = st.text_input("Username or email:")
+        password = st.text_input("Password:", type="password")
 
         st.markdown(
             """
@@ -82,7 +82,7 @@ with st.container():
                     max-width: 900px;
                     margin-left: 100px;  /* Position the Sign In button 100px from the left */
                     margin-top: 20px;    /* Spacing above the button */
-                    background-color: #8c4bf2;  /* Correct purple background color for the Sign In button */
+                    background-color: #8c4bbf;  /* Correct purple background color for the Sign In button */
                     border-radius: 8px;  /* Rounded corners */
                     text-align: center;  /* Center text within the button */
                     border: none;  /* Remove any default border */``

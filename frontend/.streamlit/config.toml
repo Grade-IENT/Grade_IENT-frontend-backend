@@ -1,6 +1,6 @@
 [theme]
 primaryColor = '#7792E3'               # Interactive elements (buttons, sliders, etc.)
 backgroundColor = '#F3F3F3'            # Main content area background
-secondaryBackgroundColor = '#FFFFFF'   # White sidebar background (this is the fix)
+secondaryBackgroundColor = '#D1A3E5'   # Light pink sidebar background (light pink color code)
 textColor = '#180606'                  # Text color for the app
 font = "arial"                          # Font for all text except code blocks
