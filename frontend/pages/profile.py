@@ -2,6 +2,31 @@ import streamlit as st
 import psycopg2
 import pandas as pd
 import base64
+
+
+
+# --- DB Connection ---
+def get_connection():
+    return psycopg2.connect(
+        host="localhost",
+        database="gradient",
+        user="postgres"
+    )
+
+# --- Login Check ---
+if "user_id" not in st.session_state:
+    st.error("🚫 You must be logged in to view this page.")
+    st.stop()
+
+# --- Get Username ---
+with get_connection() as conn:
+    cur = conn.cursor()
+    cur.execute("SELECT username FROM UserAccount WHERE id = %s", (st.session_state["user_id"],))
+    result = cur.fetchone()
+    username = result[0] if result else "Unknown User"
+
+# --- Page Config & CSS ---
+st.set_page_config(page_title=f"Gradient - {username}'s Profile", page_icon=":tada:", layout="wide", initial_sidebar_state="collapsed")
 def load_logo_as_base64(logo_path):
     with open(logo_path, "rb") as logo_file:
         encoded_logo = base64.b64encode(logo_file.read()).decode()
@@ -35,28 +60,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# --- DB Connection ---
-def get_connection():
-    return psycopg2.connect(
-        host="localhost",
-        database="gradient",
-        user="postgres"
-    )
-
-# --- Login Check ---
-if "user_id" not in st.session_state:
-    st.error("🚫 You must be logged in to view this page.")
-    st.stop()
-
-# --- Get Username ---
-with get_connection() as conn:
-    cur = conn.cursor()
-    cur.execute("SELECT username FROM UserAccount WHERE id = %s", (st.session_state["user_id"],))
-    result = cur.fetchone()
-    username = result[0] if result else "Unknown User"
-
-# --- Page Config & CSS ---
-st.set_page_config(page_title=f"Gradient - {username}'s Profile", page_icon=":tada:", layout="wide", initial_sidebar_state="collapsed")
 st.markdown(
     """
     <style>
@@ -83,14 +86,61 @@ def local_css(file_name):
 local_css("style/style.css")
 
 # --- Top-right Logout Dropdown ---
-st.markdown("<div id='logout-menu'>", unsafe_allow_html=True)
-with st.expander(f"👤 {username}"):
-    if st.button("🚪 Log Out"):
-        st.session_state.clear()
-        st.success("Logged out successfully.")
-        st.switch_page("gradient.py")
-st.markdown("</div>", unsafe_allow_html=True)
+# ⬅️ Style and HTML for dropdown
+# ⬅️ Style for top-right dropdown
+st.markdown("""
+<style>
+#logout-menu {
+    position: fixed;
+    top: 1.2rem;
+    right: 2rem;
+    background-color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    z-index: 9999;
+    width: auto;
+}
+#logout-menu details {
+    cursor: pointer;
+}
+#logout-menu summary {
+    list-style: none;
+    font-weight: 600;
+}
+/* Style for the logout button to make it text-like */
+#logout-button {
+    background: none;
+    border: none;
+    color: #ff0000; /* Red text */
+    cursor: pointer;
+    padding: 5px 0;
+    margin-top: 5px;
+    text-align: left;
+    font-size: 14px;
+}
+#logout-button:hover {
+    text-decoration: underline;
+}
+</style>
+""", unsafe_allow_html=True)
 
+# ⬅️ Dropdown HTML for logout
+st.markdown(f"""
+<div id="logout-menu">
+  <details>
+    <summary>{username} ⏷</summary>
+    <form method='post'>
+        <button id="logout-button" type="submit" name="logout">Log Out</button>
+    </form>
+  </details>
+</div>
+""", unsafe_allow_html=True)
+
+# ⬅️ Handle logout event
+if st.session_state.get("logout"):
+    st.session_state.clear()
+    st.switch_page("gradient.py")
 # --- Header Section ---
 with st.container():
     st.title(f"{username}'s Profile")
