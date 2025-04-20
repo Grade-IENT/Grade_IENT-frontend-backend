@@ -45,9 +45,7 @@ st.markdown(
 st.markdown(
     """
     <style>
-        div[data-testid="collapsedControl"] {
-            visibility: hidden;
-        }
+       
     </style>
     """,
     unsafe_allow_html=True

@@ -1,8 +1,6 @@
 import streamlit as st
 import pandas as pd
 import psycopg2
-
-
 import base64
 
 st.set_page_config(page_title= "Gradient - Professors", page_icon=":tada:", layout ="wide", initial_sidebar_state="collapsed")
@@ -12,17 +10,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-st.markdown(
-    """
-    <style>
-        div[data-testid="collapsedControl"] {
-            visibility: hidden;
-        }
-    </style>
-    """,
-    unsafe_allow_html=True
-) 
 # use CSS
 def local_css(file_name):
     with open(file_name) as f :
