@@ -5,22 +5,38 @@ import base64
 
 st.set_page_config(page_title= "Gradient - Professors", page_icon=":tada:", layout ="wide", initial_sidebar_state="collapsed")
 
-st.markdown(
-    f'<a href="/"><img class="logo" src="data:image/png;base64,{base64.b64encode(open("logo.png", "rb").read()).decode()}" alt="Logo"></a>',
-    unsafe_allow_html=True
-)
+def load_logo_as_base64(logo_path):
+    with open(logo_path, "rb") as logo_file:
+        encoded_logo = base64.b64encode(logo_file.read()).decode()
+    return encoded_logo
+
+logo_base64 = load_logo_as_base64("logo.png")
 
 st.markdown(
-    """
+    f"""
     <style>
-        .stApp {
-            background: white !important; /* Plain white background */
-        }
+        .center-logo {{
+            display: flex;
+            justify-content: center;  /* Center horizontally */
+            align-items: center;      /* Center vertically */
+            height: 150px;            /* Full viewport height */
+            background: url('data:image/png;base64,{logo_base64}') no-repeat center center; /* Set the image as background */
+            background-size: contain; /* Ensure the logo scales nicely */
+            width: 100%;              /* Full width of the container */
+           padding: 0;               /* Remove extra padding */
+        }}
+        .stApp {{
+            background: white !important; /* Apply white background */
+        }}
     </style>
     """, unsafe_allow_html=True
 )
 
-# use CSS
+st.markdown(
+    f'<div class="center-logo"></div>',
+    unsafe_allow_html=True
+)
+
 def local_css(file_name):
     with open(file_name) as f :
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)

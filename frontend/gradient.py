@@ -70,7 +70,7 @@ with st.container():
             """
             <style>
                 .stTextInput, .stPasswordInput {
-                    max-width: 700px;
+                    max-width: 900px;
                     margin-left: 100px;  /* Position the input fields 100px from the left */
                     margin-bottom: 20px;  /* Adds space between the fields */
                 }
@@ -79,7 +79,7 @@ with st.container():
                     color: white;
                     padding: 15px 30px;  /* Adding consistent padding to the Sign In button */
                     cursor: pointer;
-                    max-width: 700px;
+                    max-width: 900px;
                     margin-left: 100px;  /* Position the Sign In button 100px from the left */
                     margin-top: 20px;    /* Spacing above the button */
                     background-color: #8c4bf2;  /* Correct purple background color for the Sign In button */

@@ -1,8 +1,6 @@
 /* Link to Google Fonts for Roboto */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
-
-
 /* Custom Input Fields */
 .stTextInput, .stPasswordInput, .stTextArea {
     width: 100%;
@@ -18,15 +16,13 @@
 /* Display the logo normally on the left side */
 img {
     position: absolute;
-    right: 230px;  /* Position it slightly from the left edge */
+    right: 300px;  /* Position it slightly from the left edge */
     transform: translateY(-50%);  /* Adjust to truly center the logo vertically */
     width: 500px;  /* Set the logo size */
     height: auto;
     padding-top: 80px;
     z-index: 9999;  /* Ensure it's on top of other content */
 }
-
-
 
 .stButton>button:hover {
     background-color: #7a59d8;  /* Slightly darker purple */

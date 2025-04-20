@@ -1,15 +1,38 @@
 import streamlit as st
 import psycopg2
 import pandas as pd
+import base64
+def load_logo_as_base64(logo_path):
+    with open(logo_path, "rb") as logo_file:
+        encoded_logo = base64.b64encode(logo_file.read()).decode()
+    return encoded_logo
+
+logo_base64 = load_logo_as_base64("logo.png")
 
 st.markdown(
-    """
+    f"""
     <style>
-        .stApp {
-            background: white !important; /* Plain white background */
-        }
+        .center-logo {{
+            display: flex;
+            justify-content: center;  /* Center horizontally */
+            align-items: center;      /* Center vertically */
+            height: 150px;            /* Full viewport height */
+            background: url('data:image/png;base64,{logo_base64}') no-repeat center center; /* Set the image as background */
+            background-size: contain; /* Ensure the logo scales nicely */
+            width: 100%;              /* Full width of the container */
+           padding: 0;               /* Remove extra padding */
+        }}
+        .stApp {{
+            background: white !important; /* Apply white background */
+        }}
     </style>
     """, unsafe_allow_html=True
+)
+
+# Display the div with centered background logo
+st.markdown(
+    f'<div class="center-logo"></div>',
+    unsafe_allow_html=True
 )
 
 # --- DB Connection ---
