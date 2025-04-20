@@ -1,7 +1,10 @@
 /* Link to Google Fonts for Roboto */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
-input[type=email], [type=text], textarea {
+
+
+/* Custom Input Fields */
+.stTextInput, .stPasswordInput, .stTextArea {
     width: 100%;
     padding: 12px;
     border: 1px solid #d1a6e1;  /* Light purple border */
@@ -12,7 +15,20 @@ input[type=email], [type=text], textarea {
     font-family: 'Roboto', sans-serif; /* Apply Roboto font */
 }
 
-button[type=submit] {
+/* Display the logo normally on the left side */
+img {
+    position: absolute;
+    right: 200px;  /* Position it slightly from the left edge */
+    transform: translateY(-50%);  /* Adjust to truly center the logo vertically */
+    width: 500px;  /* Set the logo size */
+    height: auto;
+    padding-top: 80px;
+    z-index: 9999;  /* Ensure it's on top of other content */
+}
+
+
+/* Custom Submit Button */
+.stButton>button {
     background-color: #8c6bf2;  /* Soft purple */
     color: white;
     padding: 12px 24px;
@@ -22,95 +38,30 @@ button[type=submit] {
     font-family: 'Roboto', sans-serif; /* Apply Roboto font */
 }
 
-button[type=submit]:hover {
+.stButton>button:hover {
     background-color: #7a59d8;  /* Slightly darker purple */
 }
 
-footer {
+/* Hiding footer and header elements */
+footer, header, .stApp > header {
     visibility: hidden;
-}
-
-header {
-    visibility: hidden;
-}
-
-.stApp > header {
-    background-color: transparent;
 }
 
 .stApp {
     margin: auto;
     font-family: 'Roboto', sans-serif; /* Apply Roboto font */
     overflow: auto;
-    background: linear-gradient(315deg, #4c69f3 3%, #8c4bbf 38%, #f51b86 68%, #ff375f 98%);
-    animation: gradient 15s ease infinite;
-    background-size: 400% 400%;
-    background-attachment: fixed;
+    background: 
+        linear-gradient(to right, 
+            #4c69f3, #8c4bbf, #f51b86, #ff375f)  /* Gradient for left side */
+        0% 0% / 50% 100% no-repeat,  /* Ensure the gradient covers the left side */
+        white; /* Solid white on the right side */
 }
 
 body {
-    margin: auto;
-    font-family: 'Roboto', sans-serif; /* Apply Roboto font */
-    overflow: auto;
-    background: linear-gradient(315deg, #ffb3d9 3%, #ff5e9e 38%, #ff5172 68%, #ff3066 98%);
-    animation: gradient 15s ease infinite;
-    background-size: 400% 400%;
-    background-attachment: fixed;
-}
-
-@keyframes gradient {
-    0% {
-        background-position: 0% 0%;
-    }
-    50% {
-        background-position: 100% 100%;
-    }
-    100% {
-        background-position: 0% 0%;
-    }
-}
-
-/* Polished text color and styling for the 'Welcome' message */
-.welcome-text {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 500;
-    color: #333; /* Dark gray for readability */
-    font-size: 24px;
-    line-height: 1.5;
-    margin-bottom: 20px;
-}
-
-/* Wave colors remain as is */
-.wave {
-    background: pink;  /* Light Pink */
-    border-radius: 1000% 1000% 0 0;
-    position: fixed;
-    width: 200%;
-    height: 12em;
-    animation: wave 10s -3s linear infinite;
-    transform: translate3d(0, 0, 0);
-    opacity: 0.8;
-    bottom: 0;
-    left: 0;
-    z-index: -1;
-}
-
-@keyframes wave {
-    2% {
-        transform: translateX(1);
-    }
-    25% {
-        transform: translateX(-25%);
-    }
-    50% {
-        transform: translateX(-50%);
-    }
-    75% {
-        transform: translateX(-25%);
-    }
-    100% {
-        transform: translateX(1);
-    }
+    margin: 0;
+    height: 100vh;
+    background: white !important; /* White background for the right side */
 }
 
 /* Sidebar Customization */
@@ -140,12 +91,8 @@ div[data-testid="stSidebar"] .css-1g7e2f0 > button {
     color: #333 !important; /* Button text color */
 }
 
-/* Fixed Position for Logo */
-.logo {
-    position: fixed;
-    top: 50px; /* Distance from the top */
-    left: 50px; /* Distance from the left */
-    width: 150px; /* Adjust size */
-    height: auto;
-    z-index: 9999; /* Ensure it's on top of all other content */
+/* Custom Input Field focus state */
+.stTextInput input:focus, .stPasswordInput input:focus, .stTextArea textarea:focus {
+    border-color: #8c6bf2 !important;
+    outline: none;
 }

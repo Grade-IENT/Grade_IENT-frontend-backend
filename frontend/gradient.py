@@ -1,58 +1,27 @@
-# frontend/pages/login.py
 import streamlit as st
 import psycopg2
-from psycopg2 import sql
-from pathlib import Path
 import bcrypt
 import base64
-from PIL import Image
 
-st.set_page_config(page_title="Gradient - Login", layout="centered", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Gradient - Login", layout="wide", initial_sidebar_state="collapsed")
 
-st.markdown(
-    f'<a href="/"><img class="logo" src="data:image/png;base64,{base64.b64encode(open("logo.png", "rb").read()).decode()}" alt="Logo"></a>',
-    unsafe_allow_html=True
-)
+# Function to load CSS for styling
+def load_css():
+    with open("./style/style.css") as f:  # Make sure the path to your CSS is correct
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-#HEADER
-with st.container():
-    left, right = st.columns((5,1))
+def display_logo():
+    with open("logo.png", "rb") as logo_file:
+        encoded_logo = base64.b64encode(logo_file.read()).decode()
+        st.markdown(
+        f'<img src="data:image/png;base64,{encoded_logo}" alt="Logo">',
+        unsafe_allow_html=True
+    )
 
-    with left:
-        st.subheader("Hi,")
-        st.title("Welcome to Gradient!")
-        st.write("Excited to have you test out our website! We are your one stop shop to scheduling, prereqs, professors and 4 year plans!")
-        #st.write("[click here](https://www.google.com/search?q=oscars+2025&rlz=1C1ONGR_enUS1032US1032&oq=oscars+2025&gs_lcrp=EgZjaHJvbWUqDQgAEAAYgwEYsQMYgAQyDQgAEAAYgwEYsQMYgAQyDQgBEAAYgwEYsQMYgAQyDQgCEAAYgwEYsQMYgAQyDQgDEAAYgwEYsQMYgAQyDQgEEAAYgwEYsQMYgAQyDQgFEAAYgwEYsQMYgAQyDQgGEAAYgwEYsQMYgAQyDQgHEAAYgwEYsQMYgAQyEAgIEAAYgwEYsQMYgAQYigUyEAgJEAAYgwEYsQMYgAQYigXSAQgyMjI5ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8)")
-  
+display_logo()
 
-# Custom CSS to center the logo
-login_box_css = """
-<style>
-.center-logo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.center-logo img {
-    width: auto;
-    height: 100px;  /* Adjust height as needed */
-}
-</style>
-"""
 
-st.markdown(login_box_css, unsafe_allow_html=True)
-
-# Read the logo and encode it into base64
-with open("logo.png", "rb") as logo_file:
-    encoded_logo = base64.b64encode(logo_file.read()).decode()
-
-# Centered logo
-st.markdown(
-    f'<div class="center-logo"><img src="data:image/png;base64,{encoded_logo}" alt="Logo"></div>',
-    unsafe_allow_html=True
-)
-
-# DB connection
+# DB connection (No changes here)
 def get_connection():
     return psycopg2.connect(
         host="localhost",
@@ -60,37 +29,93 @@ def get_connection():
         user="postgres"
     )
 
-st.markdown("<div class='login-box'>", unsafe_allow_html=True)
 
-st.markdown("## Login")
+# Main container for left and right sections
+with st.container():
+    left, right = st.columns(2)  # Two equal columns for the left and right sections
 
-username = st.text_input("Username")
-password = st.text_input("Password", type="password")
+    with left:
+        st.markdown(
+            """
+            <div style="color: white; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+                Hi! Excited to have you test out our website! We are your one stop shop to scheduling, prereqs, professors, and 4-year plans!
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
 
-if st.button("Log In"):
-    with get_connection() as conn:
-        cur = conn.cursor()
-        cur.execute("SELECT id, userPassword FROM UserAccount WHERE username = %s", (username,))
-        result = cur.fetchone()
+    with right:
+        st.markdown(
+            """
+            <div style="text-align: left; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; padding-left: 20px; padding-right: 20px; margin-top: 100px;">
+                <h2>Welcome back!</h2>
+                <p>You can sign in to access with your existing account.</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+       
+        st.markdown(
+            """
+            <div style="padding-top: 20px; padding-bottom: 20px; margin-left: 100px; font-size: 40px; font-weight: bold; color: #8c4bbf;">
+                 Sign In
+            </div>
+            """, unsafe_allow_html=True
+        )
+        
+        username = st.text_input("Username or email")
+        password = st.text_input("Password", type="password")
 
-        if result and bcrypt.checkpw(password.encode(), result[1].encode()):
-            st.session_state["user_id"] = result[0]
-         #   st.experimental_rerun()  # Rerun first to trigger switch_page
+        st.markdown(
+            """
+            <style>
+                .stTextInput, .stPasswordInput {
+                    max-width: 700px;
+                    margin-left: 100px;  /* Position the input fields 100px from the left */
+                    margin-bottom: 20px;  /* Adds space between the fields */
+                }
 
-# Then redirect at the top of the file (or just below the login logic)
-if "user_id" in st.session_state:
-    st.switch_page("pages/profile.py")
+                .stButton > button {
+                    padding: 15px 30px;  /* Adding padding to the Sign In button */
+                    margin-left: 100px;  /* Position the Sign In button 100px from the left */
+                    margin-top: 20px;    /* Spacing above the button */
+                    background-color: #8c6bf2;  /* Purple background color for the Sign In button */
+                    color: white;  /* White text */
+                    border-radius: 8px;  /* Rounded corners */
+                    border: none;  /* Remove default border */
+                    text-align: center;  /* Center text within the button */
+                    cursor: pointer;  /* Change cursor to pointer */
+                }
 
-# use CSS
-with open('./style/style.css') as f:
-    css = f.read()
+                .stCheckbox {
+                    margin-left: 100px;  /* Position both checkbox and 'Forgot password?' link 100px from the left */
+                    margin-bottom: 20px;  /* Adds space between the checkbox/link and the next element */
+                }
 
-st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
+                .stMarkdown a{
+                    margin-left: 100px;  /* Position both checkbox and 'Forgot password?' link 100px from the left */
+                    margin-bottom: 20px;  /* Adds space between the checkbox/link and the next element */
+                }
 
+            </style>
+            """, unsafe_allow_html=True
+        )
+        
+        remember_me = st.checkbox("Remember me")
+        forgot_password = st.markdown('<a href="/forgot_password">Forgot password?</a>', unsafe_allow_html=True)
+        
+        if st.button("Sign In"):
+            # Your sign-in logic goes here
+            with get_connection() as conn:
+                cur = conn.cursor()
+                cur.execute("SELECT id, userPassword FROM UserAccount WHERE username = %s", (username,))
+                result = cur.fetchone()
 
-st.markdown("<a href='/create_account'>Create Account</a>", unsafe_allow_html=True)
-st.markdown("</div>", unsafe_allow_html=True)
+                if result and bcrypt.checkpw(password.encode(), result[1].encode()):
+                    st.session_state["user_id"] = result[0]
+                    st.experimental_rerun()  # Rerun to trigger page switch
+        st.markdown("<a href='/create_account'>New here? Create an Account</a>", unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)  # Close the div here
 
-
-
-
+# Load custom styles
+load_css()
