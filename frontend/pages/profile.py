@@ -2,6 +2,16 @@ import streamlit as st
 import psycopg2
 import pandas as pd
 
+st.markdown(
+    """
+    <style>
+        .stApp {
+            background: white !important; /* Plain white background */
+        }
+    </style>
+    """, unsafe_allow_html=True
+)
+
 # --- DB Connection ---
 def get_connection():
     return psycopg2.connect(

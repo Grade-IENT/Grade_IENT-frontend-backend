@@ -10,6 +10,16 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+st.markdown(
+    """
+    <style>
+        .stApp {
+            background: white !important; /* Plain white background */
+        }
+    </style>
+    """, unsafe_allow_html=True
+)
+
 # use CSS
 def local_css(file_name):
     with open(file_name) as f :

@@ -18,7 +18,7 @@
 /* Display the logo normally on the left side */
 img {
     position: absolute;
-    right: 200px;  /* Position it slightly from the left edge */
+    right: 230px;  /* Position it slightly from the left edge */
     transform: translateY(-50%);  /* Adjust to truly center the logo vertically */
     width: 500px;  /* Set the logo size */
     height: auto;
@@ -27,16 +27,6 @@ img {
 }
 
 
-/* Custom Submit Button */
-.stButton>button {
-    background-color: #8c6bf2;  /* Soft purple */
-    color: white;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: 'Roboto', sans-serif; /* Apply Roboto font */
-}
 
 .stButton>button:hover {
     background-color: #7a59d8;  /* Slightly darker purple */

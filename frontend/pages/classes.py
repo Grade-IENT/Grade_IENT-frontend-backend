@@ -7,12 +7,11 @@ st.set_page_config(page_title="Gradient - Classes", page_icon=":tada:", layout="
 st.markdown(
     """
     <style>
-        div[data-testid="collapsedControl"] {
-            visibility: hidden;
+        .stApp {
+            background: white !important; /* Plain white background */
         }
     </style>
-    """,
-    unsafe_allow_html=True
+    """, unsafe_allow_html=True
 )
 
 def local_css(file_name):

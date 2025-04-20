@@ -38,7 +38,7 @@ with st.container():
         st.markdown(
             """
             <div style="color: white; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; font-size: 36px; padding: 150px;">
-                Hi! Welcome to Grade-IENT. <br> Our goal is to help students achieve academic success by helping them create their path through their Engineering major at Rutgers! We are excited to have you test out our website! We are your one stop shop to scheduling, prereqs, professors, and 4-year plans!
+                Hi! Welcome to Grade-IENT. <br> Our goal is to help students achieve academic success by helping them create their path through their Engineering major at Rutgers! We are excited to have you test out our website! We are your one stop shop to scheduling, prereqs, professors, and 4-year plans.
             </div>
             """, 
             unsafe_allow_html=True
@@ -47,9 +47,9 @@ with st.container():
     with right:
         st.markdown(
             """
-            <div style="text-align: left; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; padding-left: 20px; padding-right: 20px; margin-top: 100px;">
+            <div style="text-align: left; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 25px; height: 100%; padding-left: 20px; padding-right: 20px; margin-top: 100px;">
                 <h2>Welcome back!</h2>
-                <p>You can sign in to access with your existing account.</p>
+                You can sign in to access your existing account.
             </div>
             """,
             unsafe_allow_html=True
@@ -76,17 +76,18 @@ with st.container():
                 }
 
                 .stButton > button {
-                    padding: 15px 30px;  /* Adding padding to the Sign In button */
+                    color: white;
+                    padding: 15px 30px;  /* Adding consistent padding to the Sign In button */
+                    cursor: pointer;
+                    max-width: 700px;
                     margin-left: 100px;  /* Position the Sign In button 100px from the left */
                     margin-top: 20px;    /* Spacing above the button */
-                    background-color: #8c6bf2;  /* Purple background color for the Sign In button */
-                    color: white;  /* White text */
+                    background-color: #8c4bf2;  /* Correct purple background color for the Sign In button */
                     border-radius: 8px;  /* Rounded corners */
-                    border: none;  /* Remove default border */
                     text-align: center;  /* Center text within the button */
-                    cursor: pointer;  /* Change cursor to pointer */
+                    border: none;  /* Remove any default border */``
                 }
-
+                
                 .stCheckbox {
                     margin-left: 100px;  /* Position both checkbox and 'Forgot password?' link 100px from the left */
                     margin-bottom: 20px;  /* Adds space between the checkbox/link and the next element */
@@ -95,6 +96,7 @@ with st.container():
                 .stMarkdown a{
                     margin-left: 100px;  /* Position both checkbox and 'Forgot password?' link 100px from the left */
                     margin-bottom: 20px;  /* Adds space between the checkbox/link and the next element */
+                    color: #8c4bf2
                 }
 
             </style>
@@ -102,7 +104,7 @@ with st.container():
         )
         
         remember_me = st.checkbox("Remember me")
-        forgot_password = st.markdown('<a href="/forgot_password">Forgot password?</a>', unsafe_allow_html=True)
+     #   forgot_password = st.markdown('<a href="/forgot_password">Forgot password?</a>', unsafe_allow_html=True)
         
         if st.button("Sign In"):
             # Your sign-in logic goes here
