@@ -38,7 +38,7 @@ with st.container():
         st.markdown(
             """
             <div style="color: white; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; font-size: 36px; padding: 150px;">
-                Hi! Welcome to Grade-IENT. <br> Our goal is to help students achieve academic success by helping them create their path through their Engineering major at Rutger! We are excited to have you test out our website! We are your one stop shop to scheduling, prereqs, professors, and 4-year plans!
+                Hi! Welcome to Grade-IENT. <br> Our goal is to help students achieve academic success by helping them create their path through their Engineering major at Rutgers! We are excited to have you test out our website! We are your one stop shop to scheduling, prereqs, professors, and 4-year plans!
             </div>
             """, 
             unsafe_allow_html=True
