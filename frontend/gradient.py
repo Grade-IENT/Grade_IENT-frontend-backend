@@ -114,8 +114,8 @@ with st.container():
                 result = cur.fetchone()
 
                 if result and bcrypt.checkpw(password.encode(), result[1].encode()):
-                    st.session_state["user_id"] = result[0]
-                    st.experimental_rerun()  # Rerun to trigger page switch
+                    st.session_state["user_id"] =  result[0]
+                    st.switch_page("pages/profile.py")  # Rerun to trigger page switch
         st.markdown("<a href='/create_account'>New here? Create an Account</a>", unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)  # Close the div here
 
