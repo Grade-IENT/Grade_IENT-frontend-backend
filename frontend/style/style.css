@@ -20,13 +20,18 @@
 /* Display the logo normally on the left side */
 img {
     position: absolute;
-    right: 295px;  /* Position it slightly from the left edge */
-    transform: translateY(-50%);  /* Adjust to truly center the logo vertically */
-    width: 500px;  /* Set the logo size */
+    /* Vertically center */
+    top: 50%;
+    /* Horizontally center at 75% of the viewport (i.e. middle of right half) */
+    left: 50%;
+    /* Shift back by half its own size */
+    transform: translate(-50%, -50%);
+    
+    width: 500px;
     height: auto;
-    padding-top: 80px;
-    z-index: 9999;  /* Ensure it's on top of other content */
-}
+    z-index: 9999;
+  }
+  
 
 /* Override the background of input fields to prevent lilac */
 .stTextInput input, .stPasswordInput input, .stTextArea textarea {
