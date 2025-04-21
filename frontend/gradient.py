@@ -5,11 +5,37 @@ import base64
 
 st.set_page_config(page_title="Gradient - Login", layout="wide", initial_sidebar_state="collapsed")
 
-# Function to load CSS for styling
 def load_css():
-    with open("./style/style.css") as f:  # Make sure the path to your CSS is correct
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+   with open("./style/style.css") as f:  # Make sure the path to your CSS is correct
+       st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
+
+
+# Inject CSS for as full‐page animated gradient
+st.markdown(
+    """
+    <style>
+    /* Static left‑half gradient, right half white */
+    html, body, .stApp {
+        margin: 0; 
+        padding: 0; 
+        height: 100%;
+        background:
+            linear-gradient(
+                to right,
+                #4c69f3,
+                #8c4bbf,
+                #f51b86,
+                #ff375f
+            ) 0% 0% / 100% 100% no-repeat,
+            /* white for the rest */
+            white !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+# Now you can build the rest of your UI on top of that animated background
 
 # DB connection (No changes here)
 def get_connection():
@@ -19,151 +45,123 @@ def get_connection():
         user="postgres"
     )
 
+@st.dialog(" ", width="large")
+def show_create_account_form():
+    st.markdown(
+    """
+    <h2 style="
+      text-align: center;
+      color: #8c4bbf;
+      white-space: nowrap;
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+    ">
+      Create Your Account
+    </h2>
+    """,
+    unsafe_allow_html=True
+)
+    email = st.text_input("Email")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    create_account = st.button("Create Account")
 
-# Main container for left and right sections
-with st.container():
-    left, right = st.columns(2)  # Two equal columns for the left and right sections
+    
 
-    with left:
-        st.markdown(
-            """
-            <div style="color: white; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; font-size: 36px; padding: 150px;">
-                Welcome to Grade-IENT. <br> Our goal is to help students achieve academic success by helping them create their path through their Engineering major at Rutgers! We are excited to have you test out our website! We are your one stop shop to scheduling, prereqs, professors, and 4-year plans.
-            </div>
-            """, 
-            unsafe_allow_html=True
-        )
+    
+    if email and username and password:
+        if create_account:
+            hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
-    with right:
-        with open("logo.png", "rb") as logo_file:
-            encoded_logo = base64.b64encode(logo_file.read()).decode()
-            st.markdown(
-            f'<img src="data:image/png;base64,{encoded_logo}" alt="Logo">',
-            unsafe_allow_html=True
-        )
+            try:
+                with get_connection() as conn:
+                    cur = conn.cursor()
+                    cur.execute("INSERT INTO UserAccount (username, userPassword, email) VALUES (%s, %s, %s)",
+                                (username, hashed_pw, email))
+                    conn.commit()
+                    st.success("Account created! Go back to login.")
+            except psycopg2.errors.UniqueViolation:
+                st.error("Username or email already exists.")
+    else:
+        st.error("Please fill in all fields.")
 
-        st.markdown(
-            """
-            <div style="text-align: left; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 25px; height: 100%; padding-left: 20px; padding-right: 20px; margin-top: 100px;">
-                <h2>Welcome back!</h2>
-                You can sign in to access your existing account.
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-       
-        st.markdown(
-            """
-            <div style="padding-top: 20px; padding-bottom: 20px; margin-left: 100px; font-size: 40px; font-weight: bold; color: #8c4bbf;">
-                 Sign In
-            </div>
-            """, unsafe_allow_html=True
-        )
- 
-        username = st.text_input("Username or email:")
-        password = st.text_input("Password:", type="password")
 
-        st.markdown(
-            """
-            <style>
-                .stTextInput, .stPasswordInput {
-                    max-width: 900px;
-                    margin-left: 100px;  /* Position the input fields 100px from the left */
-                    margin-bottom: 20px;  /* Adds space between the fields */
-                }
 
-                .stButton > button {
-                    color: white;
-                    padding: 15px 30px;  /* Adding consistent padding to the Sign In button */
-                    cursor: pointer;
-                    max-width: 900px;
-                    margin-left: 100px;  /* Position the Sign In button 100px from the left */
-                    margin-top: 20px;    /* Spacing above the button */
-                    background-color: #8c4bbf;  /* Correct purple background color for the Sign In button */
-                    border-radius: 8px;  /* Rounded corners */
-                    text-align: center;  /* Center text within the button */
-                    border: none;  /* Remove any default border */``
-                }
-                
-                .stCheckbox {
-                    margin-left: 100px;  /* Position both checkbox and 'Forgot password?' link 100px from the left */
-                    margin-bottom: 20px;  /* Adds space between the checkbox/link and the next element */
-                }
 
-                .stMarkdown a{
-                    margin-left: 100px;  /* Position both checkbox and 'Forgot password?' link 100px from the left */
-                    margin-bottom: 20px;  /* Adds space between the checkbox/link and the next element */
-                    color: #8c4bf2
-                }
+# Create three equal columns
+col1, col2, col3 = st.columns(3)
 
-            </style>
-            """, unsafe_allow_html=True
-        )
-        
-        remember_me = st.checkbox("Remember me")
-     #   forgot_password = st.markdown('<a href="/forgot_password">Forgot password?</a>', unsafe_allow_html=True)
-        
-        if st.button("Sign In"):
-            # Your sign-in logic goes here
-            with get_connection() as conn:
-                cur = conn.cursor()
-                cur.execute("SELECT id, userPassword FROM UserAccount WHERE username = %s", (username,))
-                result = cur.fetchone()
+# Leave the first and third empty, render your card in the second
+with col2:
+    # Start a white‑background “card”
+    
+    st.markdown(
+        """
+        <style>
+        /* Select the middle column in every horizontal block */
+        div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"]:nth-child(2) {
+            background-color: white !important;
+            padding: 1rem !important;           /* optional: inner padding */
+            border-radius: 8px !important;      /* optional: rounded corners */
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important; /* optional: shadow */
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    # Logo
+    with open("logo.png", "rb") as logo_file:
+        encoded_logo = base64.b64encode(logo_file.read()).decode()
+    st.markdown(
+        f'<img src="data:image/png;base64,{encoded_logo}" '
+        "style='display:block; margin:0 auto 0rem; height:120px;'>",
+        unsafe_allow_html=True,
+    )
 
-                if result and bcrypt.checkpw(password.encode(), result[1].encode()):
-                    st.session_state["user_id"] =  result[0]
-                    st.switch_page("pages/profile.py")  # Rerun to trigger page switch
+    # Title
+    st.markdown(
+        """
+        <div style="
+            text-align: center;
+            color: #8c4bbf;
+            font-size: 1.5rem;       /* smaller than an H2 */
+            font-weight: 600;        /* semi‑bold */
+            margin-bottom: 0.5rem;
+            text-decoration: none;   /* no underline */
+        ">
+        Sign In
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    # Inputs
+    username = st.text_input("Username or email:")
+    password = st.text_input("Password:", type="password")
+    remember_me = st.checkbox("Remember me")
 
-        def get_connection():
-            return psycopg2.connect(
-                host="localhost",
-                database="gradient",
-                user="postgres"
+    # Sign In button
+    if st.button("Sign In"):
+        with get_connection() as conn:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT id, userPassword FROM UserAccount WHERE username = %s",
+                (username,),
             )
-        def show_create_account_form():
-            st.markdown(
-                    """
-                    <div style="padding-top: 20px; padding-bottom: 20px; margin-left: 100px; font-size: 40px; font-weight: bold; color: #8c4bbf;">
-                        Create Your Account
-                    </div>
-                    """, 
-                    unsafe_allow_html=True
-                )
-            email = st.text_input("Email")
-            username = st.text_input("Username")
-            password = st.text_input("Password", type="password")
-            create_account = st.button("Create Account")
+            result = cur.fetchone()
+        if result and bcrypt.checkpw(password.encode(), result[1].encode()):
+            st.session_state["user_id"] = result[0]
+            st.success("✅ Logged in successfully!")
+            st.switch_page("pages/profile.py")
+        else:
+            st.error("Invalid username or password.")
 
-           
-            if not email or not username or not password:
-                st.error("Please fill in all fields.")
-            else:
-         
-                if create_account:
-                    hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+    # “Create Account” toggle
+    if "create_account" not in st.session_state:
+        st.session_state["create_account"] = False
+    if st.button("New here? Create an Account"):
+        st.session_state["create_account"] = True
+    if st.session_state["create_account"]:
+        show_create_account_form()
 
-                    try:
-                        with get_connection() as conn:
-                            cur = conn.cursor()
-                            cur.execute("INSERT INTO UserAccount (username, userPassword, email) VALUES (%s, %s, %s)",
-                                        (username, hashed_pw, email))
-                            conn.commit()
-                            st.success("Account created! Go back to login.")
-                    except psycopg2.errors.UniqueViolation:
-                        st.error("Username or email already exists.")
-
-        if "create_account" not in st.session_state:
-            st.session_state.create_account = False
-
-        if st.button("New here? Create an Account"):
-            # Set the session state flag to True when button is clicked
-            st.session_state.create_account = True
-
-        if st.session_state.create_account:
-          
-            show_create_account_form()
-
-        st.markdown('</div>', unsafe_allow_html=True)  # Close the div here
-
-# Load custom styles
-load_css()
+    # Close the card div
+    st.markdown("</div>", unsafe_allow_html=True)
