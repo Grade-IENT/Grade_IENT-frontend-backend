@@ -20,7 +20,7 @@
 /* Display the logo normally on the left side */
 img {
     position: absolute;
-    right: 280px;  /* Position it slightly from the left edge */
+    right: 295px;  /* Position it slightly from the left edge */
     transform: translateY(-50%);  /* Adjust to truly center the logo vertically */
     width: 500px;  /* Set the logo size */
     height: auto;
