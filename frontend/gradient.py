@@ -118,22 +118,7 @@ with col2:
         unsafe_allow_html=True,
     )
 
-    # Title
-    st.markdown(
-        """
-        <div style="
-            text-align: center;
-            color: #8c4bbf;
-            font-size: 1.5rem;       /* smaller than an H2 */
-            font-weight: 600;        /* semi‑bold */
-            margin-bottom: 0.5rem;
-            text-decoration: none;   /* no underline */
-        ">
-        Sign In
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+  
     # Inputs
     username = st.text_input("Username or email:")
     password = st.text_input("Password:", type="password")
