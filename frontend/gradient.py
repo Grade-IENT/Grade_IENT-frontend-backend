@@ -80,11 +80,13 @@ def show_create_account_form():
                                 (username, hashed_pw, email))
                     conn.commit()
                     st.success("Account created! Go back to login.")
+                    st.session_state["create_account"] = False
+                    st.rerun()
             except psycopg2.errors.UniqueViolation:
                 st.error("Username or email already exists.")
     else:
         st.error("Please fill in all fields.")
-
+ 
 
 
 
