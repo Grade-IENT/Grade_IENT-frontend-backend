@@ -1,4 +1,3 @@
-# frontend/pages/create_account.py
 import streamlit as st
 import psycopg2
 import bcrypt
@@ -10,7 +9,8 @@ def get_connection():
         user="postgres"
     )
 
-st.set_page_config(page_title="Create Account", layout="centered")
+# Hide the sidebar on this page
+st.set_page_config(page_title="Create Account", layout="centered", initial_sidebar_state="collapsed")
 
 st.title("Create Your Account")
 

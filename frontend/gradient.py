@@ -116,7 +116,39 @@ with st.container():
                 if result and bcrypt.checkpw(password.encode(), result[1].encode()):
                     st.session_state["user_id"] =  result[0]
                     st.switch_page("pages/profile.py")  # Rerun to trigger page switch
-        st.markdown("<a href='/create_account'>New here? Create an Account</a>", unsafe_allow_html=True)
+
+        def get_connection():
+            return psycopg2.connect(
+                host="localhost",
+                database="gradient",
+                user="postgres"
+            )
+        def show_create_account_form():
+            st.title("Create Your Account")
+
+            email = st.text_input("Email")
+            username = st.text_input("Username")
+            password = st.text_input("Password", type="password")
+
+            if st.button("Create Account"):
+                if not email or not username or not password:
+                    st.error("Please fill in all fields.")
+                else:
+                    hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+
+                    try:
+                        with get_connection() as conn:
+                            cur = conn.cursor()
+                            cur.execute("INSERT INTO UserAccount (username, userPassword, email) VALUES (%s, %s, %s)",
+                                        (username, hashed_pw, email))
+                            conn.commit()
+                            st.success("✅ Account created! Go back to login.")
+                    except psycopg2.errors.UniqueViolation:
+                        st.error("Username or email already exists.")
+                        
+        if st.button("New here? Create an Account"):
+            show_create_account_form()
+
         st.markdown('</div>', unsafe_allow_html=True)  # Close the div here
 
 # Load custom styles
