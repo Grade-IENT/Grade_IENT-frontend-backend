@@ -124,8 +124,14 @@ with st.container():
                 user="postgres"
             )
         def show_create_account_form():
-            st.title("Create Your Account")
-
+            st.markdown(
+                    """
+                    <div style="padding-top: 20px; padding-bottom: 20px; margin-left: 100px; font-size: 40px; font-weight: bold; color: #8c4bbf;">
+                        Create Your Account
+                    </div>
+                    """, 
+                    unsafe_allow_html=True
+                )
             email = st.text_input("Email")
             username = st.text_input("Username")
             password = st.text_input("Password", type="password")
@@ -145,7 +151,7 @@ with st.container():
                             st.success("✅ Account created! Go back to login.")
                     except psycopg2.errors.UniqueViolation:
                         st.error("Username or email already exists.")
-                        
+
         if st.button("New here? Create an Account"):
             show_create_account_form()
 
