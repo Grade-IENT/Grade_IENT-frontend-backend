@@ -135,21 +135,25 @@ with st.container():
             email = st.text_input("Email")
             username = st.text_input("Username")
             password = st.text_input("Password", type="password")
+            create_account = st.button("Create Account")
+
            
             if not email or not username or not password:
                 st.error("Please fill in all fields.")
             else:
-                hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+         
+                if create_account:
+                    hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
-                try:
-                    with get_connection() as conn:
-                        cur = conn.cursor()
-                        cur.execute("INSERT INTO UserAccount (username, userPassword, email) VALUES (%s, %s, %s)",
-                                    (username, hashed_pw, email))
-                        conn.commit()
-                        st.success("✅ Account created! Go back to login.")
-                except psycopg2.errors.UniqueViolation:
-                    st.error("Username or email already exists.")
+                    try:
+                        with get_connection() as conn:
+                            cur = conn.cursor()
+                            cur.execute("INSERT INTO UserAccount (username, userPassword, email) VALUES (%s, %s, %s)",
+                                        (username, hashed_pw, email))
+                            conn.commit()
+                            st.success("Account created! Go back to login.")
+                    except psycopg2.errors.UniqueViolation:
+                        st.error("Username or email already exists.")
 
         if "create_account" not in st.session_state:
             st.session_state.create_account = False
@@ -159,6 +163,7 @@ with st.container():
             st.session_state.create_account = True
 
         if st.session_state.create_account:
+          
             show_create_account_form()
 
         st.markdown('</div>', unsafe_allow_html=True)  # Close the div here
