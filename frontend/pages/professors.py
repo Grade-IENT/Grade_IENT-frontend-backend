@@ -71,6 +71,36 @@ def get_connection():
         #password="password"  # Replace with your password
     )
 
+def get_letter_grade(sqi):
+    if sqi == -1:
+        return '', 'black'
+    if sqi < 60:
+        return 'F', 'red'
+    if sqi < 63:
+        return 'D-', 'orange'
+    if sqi < 67:
+        return 'D', 'orange'
+    if sqi < 70:
+        return 'D+', 'orange'
+    if sqi < 73:
+        return 'C-', 'gold'
+    if sqi < 77:
+        return 'C', 'gold'
+    if sqi < 80:
+        return 'C+', 'gold'
+    if sqi < 83:
+        return 'B-', 'yellowgreen'
+    if sqi < 87:
+        return 'B', 'yellowgreen'
+    if sqi < 90:
+        return 'B+', 'yellowgreen'
+    if sqi < 93:
+        return 'A-', 'limegreen'
+    if sqi < 97:
+        return 'A', 'limegreen'
+    if sqi <= 100:
+        return 'A+', 'limegreen'
+
 with st.container():
 
     st.title("Professor Lookup")
@@ -90,7 +120,7 @@ with st.container():
 
 
             query = """
-            SELECT prof_name, netid, metrics, SQI, summary
+            SELECT prof_name, SQI, summary
             FROM professor
             WHERE LOWER(prof_name) LIKE %s
             """
@@ -98,16 +128,16 @@ with st.container():
             rows = cur.fetchall()
 
             if rows:
-                df = pd.DataFrame(rows, columns=["Professor Name", "NetID", "Metrics", "SQI", "Summary"])
+                df = pd.DataFrame(rows, columns=["Professor Name", "SQI", "Summary"])
                 print(rows)
                 for _, row in df.iterrows():
                     with st.container():
+                        sqi = round(row['SQI']*10 + 50 if pd.notnull(row['SQI']) else -1, 2)
+                        letter_grade, color = get_letter_grade(sqi)
                         st.markdown(f"""
                         <div style="background-color:#f5f5f5;padding:15px;border-radius:10px;margin-bottom:10px">
                         <h5>{row['Professor Name']}</h5>
-                        <p><strong>NetID:</strong> {row['NetID'] or 'N/A'}  
-                        <br><strong>Metrics:</strong> {row['Metrics']:.2f}  
-                        <br><strong>SQI:</strong> {row['SQI'] or 'N/A'}  
+                        <br><strong>SQI:</strong> <span style = \'color: {color}\'>{letter_grade} ({sqi if sqi != -1 else 'N/A'})</span>
                         <br><strong>Summary:</strong> {row['Summary']}</p>
                         </div>
                         """, unsafe_allow_html=True)

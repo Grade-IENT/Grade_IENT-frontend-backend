@@ -66,6 +66,36 @@ def get_connection():
         # password="yourpassword"  # Optional
     )
 
+def get_letter_grade(sqi):
+    if sqi == -1:
+        return '', 'black'
+    if sqi < 60:
+        return 'F', 'red'
+    if sqi < 63:
+        return 'D-', 'orange'
+    if sqi < 67:
+        return 'D', 'orange'
+    if sqi < 70:
+        return 'D+', 'orange'
+    if sqi < 73:
+        return 'C-', 'gold'
+    if sqi < 77:
+        return 'C', 'gold'
+    if sqi < 80:
+        return 'C+', 'gold'
+    if sqi < 83:
+        return 'B-', 'yellowgreen'
+    if sqi < 87:
+        return 'B', 'yellowgreen'
+    if sqi < 90:
+        return 'B+', 'yellowgreen'
+    if sqi < 93:
+        return 'A-', 'limegreen'
+    if sqi < 97:
+        return 'A', 'limegreen'
+    if sqi <= 100:
+        return 'A+', 'limegreen'
+    
 with st.container():
     st.title("Class Lookup")
     image_column, search_column = st.columns((1, 9))
@@ -84,27 +114,23 @@ with st.container():
 
             query = """
             SELECT c.course_code, c.course_name, 
-                   pre.course_name AS pre_req_name, 
-                   co.course_name AS co_req_name,
                    c.SQI
             FROM Class c
-            LEFT JOIN Class pre ON c.pre_req = pre.id
-            LEFT JOIN Class co ON c.co_req = co.id
             WHERE LOWER(c.course_code) LIKE %s OR LOWER(c.course_name) LIKE %s
             """
             cur.execute(query, (f"%{search_term.lower()}%", f"%{search_term.lower()}%"))
             rows = cur.fetchall()
 
             if rows:
-                df = pd.DataFrame(rows, columns=["Course Code", "Course Name", "Pre-requisite", "Co-requisite", "SQI"])
+                df = pd.DataFrame(rows, columns=["Course Code", "Course Name", "SQI"])
                 for _, row in df.iterrows():
                     with st.container():
+                        sqi = round(row['SQI']*10 + 50 if pd.notnull(row['SQI']) else -1, 2)
+                        letter_grade, color = get_letter_grade(sqi)
                         st.markdown(f"""
                         <div style="background-color:#f5f5f5;padding:15px;border-radius:10px;margin-bottom:10px">
                         <h5>{row['Course Code']} - {row['Course Name']}</h5>
-                        <p><strong>Pre-req:</strong> {row['Pre-requisite'] or 'None'}  
-                        <br><strong>Co-req:</strong> {row['Co-requisite'] or 'None'}  
-                        <br><strong>SQI:</strong> {row['SQI'] if pd.notnull(row['SQI']) else 'N/A'}</p>
+                        <br><strong>SQI: </strong><span style = \'color: {color}\'>{letter_grade} ({sqi if sqi != -1 else 'N/A'})</span></p>
                         </div>
                         """, unsafe_allow_html=True)
             else:

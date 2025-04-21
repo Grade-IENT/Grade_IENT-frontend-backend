@@ -197,6 +197,36 @@ def save_plan_to_db(df):
     except psycopg2.Error as e:
         st.error(f"❌ Database error: {e.pgerror}")
 
+def get_letter_grade(sqi):
+    if sqi == -1:
+        return '', 'black'
+    if sqi < 60:
+        return 'F', 'red'
+    if sqi < 63:
+        return 'D-', 'orange'
+    if sqi < 67:
+        return 'D', 'orange'
+    if sqi < 70:
+        return 'D+', 'orange'
+    if sqi < 73:
+        return 'C-', 'gold'
+    if sqi < 77:
+        return 'C', 'gold'
+    if sqi < 80:
+        return 'C+', 'gold'
+    if sqi < 83:
+        return 'B-', 'yellowgreen'
+    if sqi < 87:
+        return 'B', 'yellowgreen'
+    if sqi < 90:
+        return 'B+', 'yellowgreen'
+    if sqi < 93:
+        return 'A-', 'limegreen'
+    if sqi < 97:
+        return 'A', 'limegreen'
+    if sqi <= 100:
+        return 'A+', 'limegreen'
+
 # ─────────────── Generate Plan ───────────────
 
 if st.session_state.clicked[1] and major in majors:
@@ -225,7 +255,7 @@ if st.session_state.clicked[1] and major in majors:
                         name, rest = rest.rsplit('(', 1)
                         credits_part, sqi_part = rest.rstrip(')').split(', SQI ')
                         credits = credits_part.strip().replace('cr', '').strip()
-                        sqi = float(sqi_part.strip())
+                        sqi = float(sqi_part.strip())*10 + 50
                         parsed.append({
                             "Course Code": code.strip(),
                             "Course Name": name.strip(),
@@ -248,11 +278,12 @@ if st.session_state.clicked[1] and major in majors:
                 valid_sqis = [row["SQI"] for row in parsed if isinstance(row["SQI"], float)]
                 if valid_sqis:
                     avg_sqi = sum(valid_sqis) / len(valid_sqis)
-                    st.markdown(f"Average SQI: **{avg_sqi:.2f}**")
+                    letter_grade, color = get_letter_grade(avg_sqi)
+                    st.html(f"Average SQI: <strong style = \'color: {color}\'>{letter_grade} ({avg_sqi:.2f})</strong>")
                 else:
                     st.markdown("Average SQI: **N/A**")
 
-                st.dataframe(parsed_df.style.hide(axis="index"), hide_index=True, use_container_width=True)
+                st.dataframe(parsed_df.style.hide(axis="index").format({"SQI": "{:.2f}"}), hide_index=True, use_container_width=True)
 
     # Download and Save buttons
     col_dl, col_save = st.columns([2, 1])
