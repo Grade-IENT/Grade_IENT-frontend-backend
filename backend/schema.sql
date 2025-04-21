@@ -5,9 +5,9 @@ CREATE TABLE Class(
     course_code VARCHAR(10) UNIQUE NOT NULL,
     course_name VARCHAR(100) NOT NULL,
     --pre_req INT references Class(id) ON DELETE SET NULL,
-    co_req INT references Class(id) ON DELETE SET NULL,
-    SQI DOUBLE PRECISION,
-    pre_req_group INT
+    -- co_req INT references Class(id) ON DELETE SET NULL,
+    SQI DOUBLE PRECISION
+    -- pre_req_group INT
 
 );
 
@@ -31,9 +31,9 @@ CREATE TABLE Professor(
 
     id SERIAL PRIMARY KEY,
     prof_name VARCHAR(100) UNIQUE,-- NOT NULL,
-    netid VARCHAR(8), --UNIQUE, --NOT NULL
+    -- netid VARCHAR(8), --UNIQUE, --NOT NULL
     --need more info for this
-    metrics DOUBLE PRECISION,
+    -- metrics DOUBLE PRECISION,
     summary TEXT,
     SQI DOUBLE PRECISION
 
