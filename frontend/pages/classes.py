@@ -2,8 +2,10 @@ import streamlit as st
 import pandas as pd
 import psycopg2
 import base64
+from streamlit_searchbox import st_searchbox
+from fuzzywuzzy import process
 
-st.set_page_config(page_title="Gradient - Classes", page_icon=":tada:", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Gradient - Classes", page_icon=":tada:", layout="wide", initial_sidebar_state="expanded")
 def load_logo_as_base64(logo_path):
     with open(logo_path, "rb") as logo_file:
         encoded_logo = base64.b64encode(logo_file.read()).decode()
@@ -78,11 +80,11 @@ def get_letter_grade(sqi):
     if sqi < 70:
         return 'D+', 'orange'
     if sqi < 73:
-        return 'C-', 'gold'
+        return 'C-', '#FFA600' # darker yellow for visibility
     if sqi < 77:
-        return 'C', 'gold'
+        return 'C', '#FFA600'
     if sqi < 80:
-        return 'C+', 'gold'
+        return 'C+', '#FFA600'
     if sqi < 83:
         return 'B-', 'yellowgreen'
     if sqi < 87:
@@ -97,33 +99,57 @@ def get_letter_grade(sqi):
         return 'A+', 'limegreen'
     
 with st.container():
+    @st.cache_data(ttl=600)  # cache for 10 minutes
+    def load_classes():
+        conn = get_connection()
+        cur = conn.cursor()
+
+        query = """
+        SELECT c.course_code, c.course_name, c.SQI
+        FROM Class c
+        """
+        cur.execute(query)
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+
+        return pd.DataFrame(rows, columns=["Course Code", "Course Name", "SQI"])
     st.title("Class Lookup")
-    image_column, search_column = st.columns((1, 9))
 
-    with image_column:
-        st.image("search.png", caption=None, width=100)
 
-    with search_column:
-        search_term = st.text_input("Search for a class by name or course code:")
+    df = load_classes()
+    course_codes = df['Course Code'].to_list()
+    course_names = df["Course Name"].tolist()
+    combined_courses = [f"{row['Course Code']} - {row['Course Name']}" for _, row in df.iterrows()]
 
-        if search_term:
-            st.write("You searched for class:", search_term)
+    def search_courses(search_term: str):
+        if not search_term:
+            return []
 
-            conn = get_connection()
-            cur = conn.cursor()
+        matches = process.extract(
+            search_term, 
+            combined_courses, 
+            limit=5
+        )
+        return [match[0] for match in matches]
+    
+    if len(df.index) != 0:
+        with st.container(border=True):
+            st.text("Search for your courses by code or name!")
+            selected_course = st_searchbox(
+                search_courses, 
+                placeholder="Search for a course...", 
+                clear_on_submit=True
+            )
 
-            query = """
-            SELECT c.course_code, c.course_name, 
-                   c.SQI
-            FROM Class c
-            WHERE LOWER(c.course_code) LIKE %s OR LOWER(c.course_name) LIKE %s
-            """
-            cur.execute(query, (f"%{search_term.lower()}%", f"%{search_term.lower()}%"))
-            rows = cur.fetchall()
+        if selected_course:
+            code, _ = selected_course.split("-", 1)
+            code = code.strip()
 
-            if rows:
-                df = pd.DataFrame(rows, columns=["Course Code", "Course Name", "SQI"])
-                for _, row in df.iterrows():
+            sel = df[df["Course Code"].str.strip() == code]
+
+            if not sel.empty:
+                for _, row in sel.iterrows():
                     with st.container():
                         sqi = round(row['SQI']*10 + 50 if pd.notnull(row['SQI']) else -1, 2)
                         letter_grade, color = get_letter_grade(sqi)
@@ -134,7 +160,40 @@ with st.container():
                         </div>
                         """, unsafe_allow_html=True)
             else:
-                st.warning("No classes found matching your query.")
+                st.error(f"No course found with code {code!r}.")
 
-            cur.close()
-            conn.close()
+
+    # search_term = st.text_input("Search for a class by name or course code:")
+
+    # if search_term:
+    #     st.write("You searched for class:", search_term)
+
+    #     conn = get_connection()
+    #     cur = conn.cursor()
+
+    #     query = """
+    #     SELECT c.course_code, c.course_name, 
+    #             c.SQI
+    #     FROM Class c
+    #     WHERE LOWER(c.course_code) LIKE %s OR LOWER(c.course_name) LIKE %s
+    #     """
+    #     cur.execute(query, (f"%{search_term.lower()}%", f"%{search_term.lower()}%"))
+    #     rows = cur.fetchall()
+
+    #     if rows:
+    #         df = pd.DataFrame(rows, columns=["Course Code", "Course Name", "SQI"])
+    #         for _, row in df.iterrows():
+    #             with st.container():
+    #                 sqi = round(row['SQI']*10 + 50 if pd.notnull(row['SQI']) else -1, 2)
+    #                 letter_grade, color = get_letter_grade(sqi)
+    #                 st.markdown(f"""
+    #                 <div style="background-color:#f5f5f5;padding:15px;border-radius:10px;margin-bottom:10px">
+    #                 <h5>{row['Course Code']} - {row['Course Name']}</h5>
+    #                 <br><strong>SQI: </strong><span style = \'color: {color}\'>{letter_grade} ({sqi if sqi != -1 else 'N/A'})</span></p>
+    #                 </div>
+    #                 """, unsafe_allow_html=True)
+    #     else:
+    #         st.warning("No classes found matching your query.")
+
+    #     cur.close()
+    #     conn.close()
