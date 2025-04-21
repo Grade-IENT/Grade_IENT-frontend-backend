@@ -10,16 +10,6 @@ def load_css():
     with open("./style/style.css") as f:  # Make sure the path to your CSS is correct
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-def display_logo():
-    with open("logo.png", "rb") as logo_file:
-        encoded_logo = base64.b64encode(logo_file.read()).decode()
-        st.markdown(
-        f'<img src="data:image/png;base64,{encoded_logo}" alt="Logo">',
-        unsafe_allow_html=True
-    )
-
-display_logo()
-
 
 # DB connection (No changes here)
 def get_connection():
@@ -45,6 +35,13 @@ with st.container():
         )
 
     with right:
+        with open("logo.png", "rb") as logo_file:
+            encoded_logo = base64.b64encode(logo_file.read()).decode()
+            st.markdown(
+            f'<img src="data:image/png;base64,{encoded_logo}" alt="Logo">',
+            unsafe_allow_html=True
+        )
+
         st.markdown(
             """
             <div style="text-align: left; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 25px; height: 100%; padding-left: 20px; padding-right: 20px; margin-top: 100px;">
