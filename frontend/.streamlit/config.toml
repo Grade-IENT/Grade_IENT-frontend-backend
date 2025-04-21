@@ -3,4 +3,4 @@ primaryColor = '#7792E3'               # Interactive elements (buttons, sliders,
 backgroundColor = '#F3F3F3'            # Main content area background
 secondaryBackgroundColor = '#D1A3E5'   # Light pink sidebar background (light pink color code)
 textColor = '#180606'                  # Text color for the app
-font = "arial"                          # Font for all text except code blocks
+font = "roboto"                          # Font for all text except code blocks

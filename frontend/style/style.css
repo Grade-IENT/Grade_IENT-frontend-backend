@@ -16,18 +16,6 @@
     color: #333 !important; /* Set text color to black or dark gray */
 }
 
-
-/* Display the logo normally on the left side */
-img {
-    position: absolute;
-    right: 295px;  /* Position it slightly from the left edge */
-    transform: translateY(-50%);  /* Adjust to truly center the logo vertically */
-    width: 500px;  /* Set the logo size */
-    height: auto;
-    padding-top: 80px;
-    z-index: 9999;  /* Ensure it's on top of other content */
-}
-
 /* Override the background of input fields to prevent lilac */
 .stTextInput input, .stPasswordInput input, .stTextArea textarea {
     background-color: white !important;  /* Set background to white */
