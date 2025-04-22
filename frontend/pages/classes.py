@@ -134,11 +134,18 @@ with st.container():
     if len(df.index) != 0:
         with st.container(border=True):
             st.text("Search for your courses by code or name!")
-            selected_course = st_searchbox(
-                search_courses, 
-                debounce=0,
-                key="class_search",
-                placeholder="Search for a course...")
+            # selected_course = st_searchbox(
+            #     search_courses, 
+            #     debounce=0,
+            #     key="class_search",
+            #     rerun_on_update=False,
+            #     placeholder="Search for a course...")
+            selected_course = st.selectbox(
+                label="Search up your courses and find their ratings!",
+                label_visibility="collapsed",
+                options=combined_courses,
+                index=None, # initially empty 
+                placeholder="Search for a professor by name...")
 
         if selected_course:
             code, _ = selected_course.split("-", 1)

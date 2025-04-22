@@ -182,18 +182,24 @@ with st.container():
     if len(df.index) != 0:
         with st.container(border=True):
             st.text("Search up your professors and find their ratings!")
-            selected_prof = st_searchbox(
-                search_professors,
-                debounce=0,
-                key="prof_search",
+            # selected_prof = st_searchbox(
+            #     search_professors,
+            #     debounce=0,
+            #     key="prof_search",
+            #     rerun_on_update=False,
+            #     placeholder="Search for a professor by name...")
+            selected_prof = st.selectbox(
+                label="Search up your professors and find their ratings!",
+                label_visibility="collapsed",
+                options=prof_names,
+                index=None, # initially empty 
                 placeholder="Search for a professor by name...")
-            # selected_prof = st.selectbox(label="Select a Prof",options=prof_names,index=None, placeholder="Search for a professor by name...")
 
         # selected_prof = st_searchbox(search_professors, placeholder="Search for a Professor...")
 
         # 1) Always show pinned first
         if st.session_state.pinned_profs: 
-            st.subheader("📌 Pinned Professors")
+            st.subheader("📌 Pinned Professors",anchor=None)
             for prof_name in st.session_state.pinned_profs.copy():
                 row = df[df["Professor Name"] == prof_name]
                 if not row.empty:

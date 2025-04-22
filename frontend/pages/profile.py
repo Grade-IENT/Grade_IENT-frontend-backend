@@ -26,7 +26,7 @@ with get_connection() as conn:
     username = result[0] if result else "Unknown User"
 
 # --- Page Config & CSS ---
-st.set_page_config(page_title=f"Gradient - {username}'s Profile", page_icon=":tada:", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title=f"Gradient - {username}'s Profile", page_icon=":tada:", layout="wide", initial_sidebar_state="expanded")
 def load_logo_as_base64(logo_path):
     with open(logo_path, "rb") as logo_file:
         encoded_logo = base64.b64encode(logo_file.read()).decode()
@@ -145,15 +145,15 @@ if st.session_state.get("logout"):
 with st.container():
     st.title(f"{username}'s Profile")
 
-    info, picture = st.columns((5, 2))
-    with info:
-        st.write("---")
-        st.write("Intended Major: Undecided")
-        st.write("Completed Credits: 31")
-        st.write("GPA: N/A")
+    # info, picture = st.columns((5, 2))
+    # with info:
+    st.write("---")
+    st.write("Intended Major: N/A")
+    st.write("Completed Credits: N/A")
+    st.write("GPA: N/A")
 
-    with picture:
-        st.image("blankprofilepic.jpg", caption="Profile Picture", width=200)
+    # with picture:
+        # st.image("blankprofilepic.jpg", caption="Profile Picture", width=200)
 
     st.write("---")
 
