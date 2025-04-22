@@ -98,28 +98,26 @@ def get_letter_grade(sqi):
     if sqi <= 100:
         return 'A+', 'limegreen'
     
+@st.cache_data(ttl=600)  # cache for 10 minutes
+def load_classes():
+    conn = get_connection()
+    cur = conn.cursor()
+
+    query = """
+    SELECT c.course_code, c.course_name, c.SQI
+    FROM Class c
+    """
+    cur.execute(query)
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    return pd.DataFrame(rows, columns=["Course Code", "Course Name", "SQI"])
+
 with st.container():
-    @st.cache_data(ttl=600)  # cache for 10 minutes
-    def load_classes():
-        conn = get_connection()
-        cur = conn.cursor()
-
-        query = """
-        SELECT c.course_code, c.course_name, c.SQI
-        FROM Class c
-        """
-        cur.execute(query)
-        rows = cur.fetchall()
-        cur.close()
-        conn.close()
-
-        return pd.DataFrame(rows, columns=["Course Code", "Course Name", "SQI"])
-    st.title("Class Lookup")
-
+    st.title("Class Lookup",anchor=False)
 
     df = load_classes()
-    course_codes = df['Course Code'].to_list()
-    course_names = df["Course Name"].tolist()
     combined_courses = [f"{row['Course Code']} - {row['Course Name']}" for _, row in df.iterrows()]
 
     def search_courses(search_term: str):
@@ -129,7 +127,7 @@ with st.container():
         matches = process.extract(
             search_term, 
             combined_courses, 
-            limit=5
+            limit=10
         )
         return [match[0] for match in matches]
     
@@ -138,9 +136,9 @@ with st.container():
             st.text("Search for your courses by code or name!")
             selected_course = st_searchbox(
                 search_courses, 
-                placeholder="Search for a course...", 
-                clear_on_submit=True
-            )
+                debounce=0,
+                key="class_search",
+                placeholder="Search for a course...")
 
         if selected_course:
             code, _ = selected_course.split("-", 1)
