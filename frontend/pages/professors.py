@@ -141,7 +141,10 @@ def render_prof_card(row):
                   background:#f9f9f9;border-left:4px solid #bbb;
                   border-radius:8px">
         <p style="margin:0 0 5px;"><strong>Summary:</strong></p>
-        <p style="margin:0;font-style:italic;color:#333">{row['Summary']}</p>
+        <p style="margin:0;color:#333">{row['Summary']}</p>
+      </div>
+      <div style="font-size: 0.85em; color: #666; background-color: #f0f0f0; padding: 8px; border-radius: 6px; margin-top: 10px;">
+        <em>Summaries are AI compilations of real RMP reviews and may not be 100% accurate. </em>
       </div>
     </div>
     """, unsafe_allow_html=True)
