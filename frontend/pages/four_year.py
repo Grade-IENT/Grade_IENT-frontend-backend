@@ -226,6 +226,13 @@ def get_letter_grade(sqi):
         return 'A', 'limegreen'
     if sqi <= 100:
         return 'A+', 'limegreen'
+def approx_score(x):
+    """
+    Cubic on [0,5] → [0,100], strictly increasing,
+    with f(0)=0, f(5)=100, fitted to your sample points.
+    """
+    a, b, c = -1.26900567,  8.69005666, 8.27485836
+    return a*x**3 + b*x**2 + c*x
 
 # ─────────────── Generate Plan ───────────────
 
@@ -255,7 +262,7 @@ if st.session_state.clicked[1] and major in majors:
                         name, rest = rest.rsplit('(', 1)
                         credits_part, sqi_part = rest.rstrip(')').split(', SQI ')
                         credits = credits_part.strip().replace('cr', '').strip()
-                        sqi = float(sqi_part.strip())*10 + 50
+                        sqi = approx_score(float(sqi_part.strip()))
                         parsed.append({
                             "Course Code": code.strip(),
                             "Course Name": name.strip(),
