@@ -33,7 +33,7 @@ MAJOR_CSV = {
 }
 
 # ─────────────── Page setup ───────────────
-st.set_page_config(page_title="Gradient – Four‑Year Plan", page_icon=":tada:", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Gradient – Four‑Year Plan", page_icon=":tada:", layout="wide", initial_sidebar_state="expanded")
 
 def load_logo_as_base64(logo_path):
     with open(logo_path, "rb") as logo_file:
