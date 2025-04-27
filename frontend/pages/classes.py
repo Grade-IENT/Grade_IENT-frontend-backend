@@ -4,6 +4,7 @@ import psycopg2
 import base64
 from streamlit_searchbox import st_searchbox
 from fuzzywuzzy import process
+import streamlit.components.v1 as components
 
 st.set_page_config(page_title="Gradient - Classes", page_icon=":tada:", layout="wide", initial_sidebar_state="expanded")
 def load_logo_as_base64(logo_path):
@@ -148,15 +149,22 @@ with st.container():
 
             if not sel.empty:
                 for _, row in sel.iterrows():
-                    with st.container():
-                        sqi = round(row['SQI']*10 + 50 if pd.notnull(row['SQI']) else -1, 2)
-                        letter_grade, color = get_letter_grade(sqi)
-                        st.markdown(f"""
+                    sqi = round(row['SQI']*10 + 50 if pd.notnull(row['SQI']) else -1, 2)
+                    letter_grade, color = get_letter_grade(sqi)
+
+                    components.html(f"""
                         <div style="background-color:#f5f5f5;padding:15px;border-radius:10px;margin-bottom:10px">
-                        <h5>{row['Course Code']} - {row['Course Name']}</h5>
-                        <br><strong>SQI: </strong><span style = \'color: {color}\'>{letter_grade} ({sqi if sqi != -1 else 'N/A'})</span></p>
+                            <h2>{row['Course Code']} - {row['Course Name']}</h2>
+                            <p><strong>SQI: </strong><span style='color:{color}'>{letter_grade} ({sqi if sqi != -1 else 'N/A'})</span></p>
+
+                            <details style="margin-top:10px;">
+                            <summary style="font-weight:bold;cursor:pointer;">View Top Professors</summary>
+                            <p style="margin-left:15px;margin-top:10px;">Top professors for this course will be displayed here.</p>
+                            </details>
                         </div>
-                        """, unsafe_allow_html=True)
+                        """, height=300)
+
+                    
             else:
                 st.error(f"No course found with code {code!r}.")
 
