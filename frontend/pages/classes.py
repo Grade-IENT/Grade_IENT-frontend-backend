@@ -124,10 +124,28 @@ def load_classes():
 
     return pd.DataFrame(rows, columns=["Course Code", "Course Name", "SQI"])
 
+@st.cache_data(ttl=600)  # cache for 10 minutes
+def load_teaches():
+    conn = get_connection()
+    cur = conn.cursor()
+
+    query = """
+    SELECT c.course_code, p.prof_name, t.sqi
+    FROM Class c JOIN Teaches t ON c.id = t.class_id
+    JOIN Professor p ON p.id = t.prof_id
+    """
+    cur.execute(query)
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    return pd.DataFrame(rows, columns=["Course Code", "Professor Name", "SQI"])
+
 with st.container():
     st.title("Class Lookup",anchor=False)
 
     df = load_classes()
+    teaches_df = load_teaches()
     combined_courses = [f"{row['Course Code']} - {row['Course Name']}" for _, row in df.iterrows()]
 
     def search_courses(search_term: str):
@@ -162,12 +180,21 @@ with st.container():
             code = code.strip()
 
             sel = df[df["Course Code"].str.strip() == code]
+            teaches_sel = teaches_df[teaches_df["Course Code"].str.strip() == code].sort_values("SQI", ascending = False).head(5)
 
             if not sel.empty:
                 for _, row in sel.iterrows():
                     with st.container():
-                        sqi = round(row['SQI']*10 + 50 if pd.notnull(row['SQI']) else -1, 2)
+                        sqi = round(approx_score(row['SQI']) if pd.notnull(row['SQI']) else -1, 2)
                         letter_grade, color = get_letter_grade(sqi)
+
+                        top_profs = ""
+                        for _, prof in teaches_sel.iterrows():
+                            teaches_sqi = round(approx_score(prof["SQI"]) if pd.notnull(prof["SQI"]) else -1, 2)
+                            teaches_letter_grade, teaches_color = get_letter_grade(approx_score(prof["SQI"]))
+                            top_profs += f"{prof['Professor Name']}: <span style='color:{teaches_color}'>{teaches_letter_grade} ({teaches_sqi if teaches_sqi != -1 else 'N/A'})</span><br>"
+                        top_profs = "No professors found for this course" if len(top_profs) == 0 else top_profs
+
                         st.markdown(f"""
                         <div style="background-color:#f5f5f5;padding:15px;border-radius:10px;margin-bottom:10px">
                             <h2>{row['Course Code']} - {row['Course Name']}</h2>
@@ -178,8 +205,8 @@ with st.container():
                             <p style="margin-left:15px;margin-top:10px;">Top professors for this course will be displayed here.</p>
                             </details>
                         </div>
-                        """, height=300)
-
+                        """, unsafe_allow_html=True)
+                        st.markdown(top_profs, unsafe_allow_html=True)
                     
             else:
                 st.error(f"No course found with code {code!r}.")
