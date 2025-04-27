@@ -10,7 +10,7 @@ def get_connection():
     return psycopg2.connect(
         host="localhost",
         database="gradient",
-        user="postgres"
+        user="postgres",
     )
 
 # --- Login Check ---
@@ -26,7 +26,7 @@ with get_connection() as conn:
     username = result[0] if result else "Unknown User"
 
 # --- Page Config & CSS ---
-st.set_page_config(page_title=f"Gradient - {username}'s Profile", page_icon=":tada:", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title=f"Gradient - {username}'s Profile", page_icon=":tada:", layout="wide", initial_sidebar_state="expanded")
 def load_logo_as_base64(logo_path):
     with open(logo_path, "rb") as logo_file:
         encoded_logo = base64.b64encode(logo_file.read()).decode()
@@ -145,19 +145,58 @@ if st.session_state.get("logout"):
 with st.container():
     st.title(f"{username}'s Profile")
 
-    info, picture = st.columns((5, 2))
-    with info:
-        st.write("---")
-        st.write("Intended Major: Undecided")
-        st.write("Completed Credits: 31")
-        st.write("GPA: N/A")
+    # info, picture = st.columns((5, 2))
+    # with info:
+    st.write("---")
+    st.write("Intended Major: N/A")
+    st.write("Completed Credits: N/A")
+    st.write("GPA: N/A")
 
-    with picture:
-        st.image("blankprofilepic.jpg", caption="Profile Picture", width=200)
+    # with picture:
+        # st.image("blankprofilepic.jpg", caption="Profile Picture", width=200)
 
     st.write("---")
 
-with st.expander("Four Year Plan"):
+def get_letter_grade(sqi):
+    if sqi == -1:
+        return '', 'black'
+    if sqi < 60:
+        return 'F', 'red'
+    if sqi < 63:
+        return 'D-', 'orange'
+    if sqi < 67:
+        return 'D', 'orange'
+    if sqi < 70:
+        return 'D+', 'orange'
+    if sqi < 73:
+        return 'C-', '#FFA600' # darker yellow for visibility
+    if sqi < 77:
+        return 'C', '#FFA600'
+    if sqi < 80:
+        return 'C+', '#FFA600'
+    if sqi < 83:
+        return 'B-', 'yellowgreen'
+    if sqi < 87:
+        return 'B', 'yellowgreen'
+    if sqi < 90:
+        return 'B+', 'yellowgreen'
+    if sqi < 93:
+        return 'A-', 'limegreen'
+    if sqi < 97:
+        return 'A', 'limegreen'
+    if sqi <= 100:
+        return 'A+', 'limegreen'
+
+def approx_score(x):
+    """
+    Cubic on [0,5] → [0,100], strictly increasing,
+    with f(0)=0, f(5)=100, fitted to your sample points.
+    """
+    a, b, c = -1.26900567,  8.69005666, 8.27485836
+    return a*x**3 + b*x**2 + c*x
+
+with st.expander('4-Year Plan'):
+    st.markdown(f"### My 4-Year Plan")
     with get_connection() as conn:
         cur = conn.cursor()
         cur.execute("""
@@ -194,7 +233,7 @@ with st.expander("Four Year Plan"):
                                 name, rest = rest.rsplit('(', 1)
                                 credits_part, sqi_part = rest.rstrip(')').split(', SQI ')
                                 credits = credits_part.strip().replace('cr', '').strip()
-                                sqi = float(sqi_part.strip())
+                                sqi = approx_score(float(sqi_part.strip()))
                                 parsed.append({
                                     "Course Code": code.strip(),
                                     "Course Name": name.strip(),
@@ -206,16 +245,18 @@ with st.expander("Four Year Plan"):
                                     "Course Code": "",
                                     "Course Name": entry.strip(),
                                     "Credits": "",
-                                    "SQI": ""
+                                    "SQI": None
                                 })
 
                         df = pd.DataFrame(parsed)
                         df = df[["Course Code", "Course Name", "Credits", "SQI"]]
-                        st.dataframe(df.style.hide(axis="index"), hide_index=True, use_container_width=True)
 
                         valid_sqis = [row["SQI"] for row in parsed if isinstance(row["SQI"], float)]
                         if valid_sqis:
                             avg_sqi = sum(valid_sqis) / len(valid_sqis)
-                            st.markdown(f"Average SQI: **{avg_sqi:.2f}**")
+                            letter_grade, color = get_letter_grade(avg_sqi)
+                            st.html(f"Average SQI: <strong style = \'color: {color}\'>{letter_grade} ({avg_sqi:.2f})</strong>")
                         else:
                             st.markdown("Average SQI: **N/A**")
+
+                        st.dataframe(df.style.hide(axis="index").format({"SQI": "{:.2f}"}, na_rep = ''), hide_index=True, use_container_width=True)

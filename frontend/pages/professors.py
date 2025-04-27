@@ -103,6 +103,15 @@ def get_letter_grade(sqi):
     if sqi <= 100:
         return 'A+', 'limegreen'
 
+def approx_score(x):
+    """
+    Cubic on [0,5] → [0,100], strictly increasing,
+    with f(0)=0, f(5)=100, fitted to your sample points.
+    """
+    a, b, c = -1.26900567,  8.69005666, 8.27485836
+    return a*x**3 + b*x**2 + c*x
+
+
 def render_prof_card(row):
     name = row["Professor Name"]
     chk_key = f"pinchk_{name}"
@@ -130,7 +139,7 @@ def render_prof_card(row):
     )
 
     # 4) Then your existing card markup
-    sqi = round(row["SQI"] * 10 + 50 if pd.notnull(row["SQI"]) else -1, 2)
+    sqi = round(approx_score(row["SQI"]) if pd.notnull(row["SQI"]) else -1, 2)
     letter, color = get_letter_grade(sqi)
     st.markdown(f"""
     <div style="background:#f5f5f5;padding:15px;border-radius:10px;margin-bottom:10px">
@@ -141,7 +150,10 @@ def render_prof_card(row):
                   background:#f9f9f9;border-left:4px solid #bbb;
                   border-radius:8px">
         <p style="margin:0 0 5px;"><strong>Summary:</strong></p>
-        <p style="margin:0;font-style:italic;color:#333">{row['Summary']}</p>
+        <p style="margin:0;color:#333">{row['Summary']}</p>
+      </div>
+      <div style="font-size: 0.85em; color: #666; background-color: #f0f0f0; padding: 8px; border-radius: 6px; margin-top: 10px;">
+        <em>Summaries are AI compilations of real RMP reviews and may not be 100% accurate. </em>
       </div>
     </div>
     """, unsafe_allow_html=True)
@@ -179,18 +191,24 @@ with st.container():
     if len(df.index) != 0:
         with st.container(border=True):
             st.text("Search up your professors and find their ratings!")
-            selected_prof = st_searchbox(
-                search_professors,
-                debounce=0,
-                key="prof_search",
+            # selected_prof = st_searchbox(
+            #     search_professors,
+            #     debounce=0,
+            #     key="prof_search",
+            #     rerun_on_update=False,
+            #     placeholder="Search for a professor by name...")
+            selected_prof = st.selectbox(
+                label="Search up your professors and find their ratings!",
+                label_visibility="collapsed",
+                options=prof_names,
+                index=None, # initially empty 
                 placeholder="Search for a professor by name...")
-            # selected_prof = st.selectbox(label="Select a Prof",options=prof_names,index=None, placeholder="Search for a professor by name...")
 
         # selected_prof = st_searchbox(search_professors, placeholder="Search for a Professor...")
 
         # 1) Always show pinned first
         if st.session_state.pinned_profs: 
-            st.subheader("📌 Pinned Professors")
+            st.subheader("📌 Pinned Professors",anchor=None)
             for prof_name in st.session_state.pinned_profs.copy():
                 row = df[df["Professor Name"] == prof_name]
                 if not row.empty:

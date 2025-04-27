@@ -9,7 +9,12 @@ def load_css():
    with open("./style/style.css") as f:  # Make sure the path to your CSS is correct
        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-
+# hides the white space at the top (header)
+st.markdown("""
+<style>
+    #MainMenu, header, footer {visibility: hidden;}
+</style>
+""",unsafe_allow_html=True)
 
 # Inject CSS for as full‐page animated gradient
 st.markdown(
@@ -149,6 +154,7 @@ with col2:
         st.session_state["create_account"] = True
     if st.session_state["create_account"]:
         show_create_account_form()
+        st.session_state["create_account"] = False
 
     # Close the card div
     st.markdown("</div>", unsafe_allow_html=True)

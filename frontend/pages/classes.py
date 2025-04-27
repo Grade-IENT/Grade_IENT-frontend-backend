@@ -99,6 +99,15 @@ def get_letter_grade(sqi):
     if sqi <= 100:
         return 'A+', 'limegreen'
     
+def approx_score(x):
+    """
+    Cubic on [0,5] → [0,100], strictly increasing,
+    with f(0)=0, f(5)=100, fitted to your sample points.
+    """
+    a, b, c = -1.26900567,  8.69005666, 8.27485836
+    return a*x**3 + b*x**2 + c*x
+
+
 @st.cache_data(ttl=600)  # cache for 10 minutes
 def load_classes():
     conn = get_connection()
@@ -134,12 +143,19 @@ with st.container():
     
     if len(df.index) != 0:
         with st.container(border=True):
-            st.text("Search for your courses by code or name!")
-            selected_course = st_searchbox(
-                search_courses, 
-                debounce=0,
-                key="class_search",
-                placeholder="Search for a course...")
+            st.text("Search for your courses by name or code!")
+            # selected_course = st_searchbox(
+            #     search_courses, 
+            #     debounce=0,
+            #     key="class_search",
+            #     rerun_on_update=False,
+            #     placeholder="Search for a course...")
+            selected_course = st.selectbox(
+                label="Search up your courses and find their ratings!",
+                label_visibility="collapsed",
+                options=combined_courses,
+                index=None, # initially empty 
+                placeholder="Search for a course by name or code...")
 
         if selected_course:
             code, _ = selected_course.split("-", 1)
@@ -149,10 +165,10 @@ with st.container():
 
             if not sel.empty:
                 for _, row in sel.iterrows():
-                    sqi = round(row['SQI']*10 + 50 if pd.notnull(row['SQI']) else -1, 2)
-                    letter_grade, color = get_letter_grade(sqi)
-
-                    components.html(f"""
+                    with st.container():
+                        sqi = round(row['SQI']*10 + 50 if pd.notnull(row['SQI']) else -1, 2)
+                        letter_grade, color = get_letter_grade(sqi)
+                        st.markdown(f"""
                         <div style="background-color:#f5f5f5;padding:15px;border-radius:10px;margin-bottom:10px">
                             <h2>{row['Course Code']} - {row['Course Name']}</h2>
                             <p><strong>SQI: </strong><span style='color:{color}'>{letter_grade} ({sqi if sqi != -1 else 'N/A'})</span></p>

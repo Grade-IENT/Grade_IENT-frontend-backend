@@ -32,8 +32,12 @@ MAJOR_CSV = {
     "Packaging Engineering":                 "packaging_engineering_courses.csv",
 }
 
+MAJOR_CSV_WK={"Computer Engineering":                  "computer_engineering_courses.csv",
+              "Mechanical Engineering":                "mechanical_engineering_courses.csv"
+              }
+
 # ─────────────── Page setup ───────────────
-st.set_page_config(page_title="Gradient – Four‑Year Plan", page_icon=":tada:", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Gradient – Four‑Year Plan", page_icon=":tada:", layout="wide", initial_sidebar_state="expanded")
 
 def load_logo_as_base64(logo_path):
     with open(logo_path, "rb") as logo_file:
@@ -108,7 +112,7 @@ with st.container():
 # Inputs
 st.title("Four Year Plan")
 
-majors = list(MAJOR_CSV.keys())
+majors = list(MAJOR_CSV_WK.keys())
 col1, col2 = st.columns(2)
 major = st.selectbox("Select Major", ["Select a major"] + majors)
 
@@ -226,12 +230,19 @@ def get_letter_grade(sqi):
         return 'A', 'limegreen'
     if sqi <= 100:
         return 'A+', 'limegreen'
+def approx_score(x):
+    """
+    Cubic on [0,5] → [0,100], strictly increasing,
+    with f(0)=0, f(5)=100, fitted to your sample points.
+    """
+    a, b, c = -1.26900567,  8.69005666, 8.27485836
+    return a*x**3 + b*x**2 + c*x
 
 # ─────────────── Generate Plan ───────────────
 
 if st.session_state.clicked[1] and major in majors:
     st.session_state["build_btn"] = True
-    csv_path = DATA_DIR / MAJOR_CSV[major]
+    csv_path = DATA_DIR / MAJOR_CSV_WK[major]
     if not csv_path.exists():
         st.error(f"Catalog file not found: **{csv_path}**")
         st.stop()
@@ -255,7 +266,7 @@ if st.session_state.clicked[1] and major in majors:
                         name, rest = rest.rsplit('(', 1)
                         credits_part, sqi_part = rest.rstrip(')').split(', SQI ')
                         credits = credits_part.strip().replace('cr', '').strip()
-                        sqi = float(sqi_part.strip())*10 + 50
+                        sqi = approx_score(float(sqi_part.strip()))
                         parsed.append({
                             "Course Code": code.strip(),
                             "Course Name": name.strip(),
